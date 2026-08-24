@@ -1,12 +1,12 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import PublicLayout from '@/Layouts/PublicLayout.vue';
-import HeroSection from '@/Components/Portfolio/HeroSection.vue';
-import AboutSection from '@/Components/Portfolio/AboutSection.vue';
-import SkillsSection from '@/Components/Portfolio/SkillsSection.vue';
-import ExperienceSection from '@/Components/Portfolio/ExperienceSection.vue';
-import ProjectsSection from '@/Components/Portfolio/ProjectsSection.vue';
-import ContactSection from '@/Components/Portfolio/ContactSection.vue';
+import { Head, useForm } from "@inertiajs/vue3";
+import PublicLayout from "@/Layouts/PublicLayout.vue";
+import HeroSection from "@/Components/Portfolio/HeroSection.vue";
+import AboutSection from "@/Components/Portfolio/AboutSection.vue";
+import SkillsSection from "@/Components/Portfolio/SkillsSection.vue";
+import ExperienceSection from "@/Components/Portfolio/ExperienceSection.vue";
+import ProjectsSection from "@/Components/Portfolio/ProjectsSection.vue";
+import ContactSection from "@/Components/Portfolio/ContactSection.vue";
 
 defineProps({
     profile: {
@@ -32,9 +32,12 @@ defineProps({
 });
 
 const formatDate = (dateString) => {
-    if (!dateString) return 'Present';
+    if (!dateString) return "Present";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+    });
 };
 
 const getMainImage = (project) => {
@@ -51,7 +54,7 @@ const getMainImage = (project) => {
         }
 
         if (image.image_path) {
-            return image.image_path.startsWith('http')
+            return image.image_path.startsWith("http")
                 ? image.image_path
                 : `/storage/${image.image_path}`;
         }
@@ -61,13 +64,13 @@ const getMainImage = (project) => {
 };
 
 const contactForm = useForm({
-    name: '',
-    email: '',
-    message: '',
+    name: "",
+    email: "",
+    message: "",
 });
 
 const submitContact = () => {
-    contactForm.post(route('contact.store'), {
+    contactForm.post(route("contact.store"), {
         preserveScroll: true,
         onSuccess: () => {
             contactForm.reset();
@@ -76,25 +79,25 @@ const submitContact = () => {
 };
 
 const prefersReducedMotion = () =>
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
         element.scrollIntoView({
-            behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+            behavior: prefersReducedMotion() ? "auto" : "smooth",
         });
     }
 };
 </script>
 
 <template>
-    <Head title="Ahmed Wael - Full-Stack Developer">
+    <Head title="Ahmed Wael | Software Engineer & Full-Stack Developer">
         <meta
             head-key="description"
             name="description"
-            content="Full-Stack Developer specializing in Laravel backends, React interfaces, REST APIs, and scalable MySQL and MongoDB systems."
+            content="Software Engineer and Full-Stack Developer building scalable web applications, reliable APIs, and modern user experiences."
         />
     </Head>
 
@@ -110,10 +113,7 @@ const scrollToSection = (id) => {
             :experiences="experiences"
             :format-date="formatDate"
         />
-        <ProjectsSection
-            :projects="projects"
-            :get-main-image="getMainImage"
-        />
+        <ProjectsSection :projects="projects" :get-main-image="getMainImage" />
         <ContactSection
             :profile="profile"
             :contact-form="contactForm"

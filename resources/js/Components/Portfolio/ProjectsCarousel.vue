@@ -225,6 +225,7 @@ const handleCardClick = (index, offset, e) => {
                         'cursor-pointer': getOffset(index) !== 0,
                     }"
                     :data-offset="getOffset(index)"
+                    :aria-hidden="getOffset(index) !== 0"
                     :style="{
                         '--card-offset': getOffset(index),
                         '--drag-x': `${dragDeltaX}px`,
@@ -296,6 +297,7 @@ const handleCardClick = (index, offset, e) => {
                                 rel="noopener noreferrer"
                                 class="btn-secondary !min-h-[40px] !px-4 !py-2 text-xs sm:text-sm font-semibold"
                                 :aria-label="`View ${project.title} on GitHub`"
+                                :tabindex="getOffset(index) === 0 ? 0 : -1"
                                 @click.stop
                             >
                                 <Github class="h-4 w-4" aria-hidden="true" />
@@ -308,6 +310,7 @@ const handleCardClick = (index, offset, e) => {
                                 rel="noopener noreferrer"
                                 class="btn-primary !min-h-[40px] !px-4 !py-2 text-xs sm:text-sm font-semibold"
                                 :aria-label="`View live demo of ${project.title}`"
+                                :tabindex="getOffset(index) === 0 ? 0 : -1"
                                 @click.stop
                             >
                                 <ExternalLink class="h-4 w-4" aria-hidden="true" />
