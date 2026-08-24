@@ -31,19 +31,9 @@ const formatDate = (dateString) => {
                 <h1 class="text-4xl font-extrabold text-white">About Me</h1>
             </div>
 
-            <!-- About Section Card with Large Clear Photo -->
+            <!-- About Section Card -->
             <div class="bg-[#0D1B2A] border border-[rgba(148,163,184,0.16)] rounded-2xl p-6 sm:p-8 space-y-6">
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6 border-b border-slate-800">
-                    <div class="p-1 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-2xl shadow-xl shadow-cyan-500/20 shrink-0">
-                        <img v-if="profile?.avatar_url || profile?.hero_image_url" 
-                             :src="profile?.avatar_url || profile?.hero_image_url" 
-                             alt="About Profile Photo" 
-                             class="w-44 h-44 sm:w-56 sm:h-56 rounded-[14px] object-cover object-top filter contrast-[1.05]" />
-                        <div v-else class="w-44 h-44 sm:w-56 sm:h-56 rounded-[14px] bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-5xl font-bold text-white">
-                            AW
-                        </div>
-                    </div>
-
+                <div class="pb-6 border-b border-slate-800">
                     <div class="space-y-2 text-center sm:text-left">
                         <h2 class="text-3xl font-extrabold text-white">Ahmed Wael</h2>
                         <p class="text-sm font-mono-code text-cyan-400 font-semibold">Full-Stack Developer (Laravel & React)</p>

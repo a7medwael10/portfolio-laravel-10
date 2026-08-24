@@ -60,6 +60,6 @@ class Profile extends Model
         }
 
         // Else, assume it's in storage
-        return asset('storage/'.$path);
+        return asset('storage/' . $path);
     }
 }

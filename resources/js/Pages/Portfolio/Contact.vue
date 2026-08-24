@@ -1,13 +1,31 @@
 <script setup>
+import { computed } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import PublicLayout from '@/Layouts/PublicLayout.vue';
 import { Send, MapPin, Mail, Phone, Loader2 } from 'lucide-vue-next';
 
-// You could pass the profile as a prop if you want to show the specific contact info dynamically
+const props = defineProps({
+    profile: {
+        type: Object,
+        default: () => ({}),
+    },
+});
+
 const form = useForm({
     name: '',
     email: '',
     message: '',
+});
+
+const phone = computed(() => props.profile?.phone || '+201212808098');
+const email = computed(() => props.profile?.email || 'ahmed.wael1025@gmail.com');
+const location = computed(() => props.profile?.location || 'Mansoura, Egypt');
+const whatsappUrl = computed(() => {
+    if (props.profile?.whatsapp_url) {
+        return props.profile.whatsapp_url;
+    }
+    const digitsOnly = phone.value.replace(/\D/g, '');
+    return digitsOnly ? `https://wa.me/${digitsOnly}` : 'https://wa.me/201212808098';
 });
 
 const submit = () => {
@@ -15,7 +33,6 @@ const submit = () => {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
-            // You can also add some toast notification here
         },
     });
 };
@@ -23,7 +40,7 @@ const submit = () => {
 
 <template>
     <Head title="Contact - Ahmed Wael" />
-    <PublicLayout>
+    <PublicLayout :profile="profile">
         <div class="max-w-6xl mx-auto space-y-12 animate-fade-in-up mb-12">
             <div class="text-center space-y-4 mb-16">
                 <div class="mx-auto w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700 shadow-lg text-emerald-400 mb-6 transform -rotate-3">
@@ -47,15 +64,15 @@ const submit = () => {
                     </div>
                     
                     <div class="space-y-6">
-                        <div class="flex items-center gap-4 group">
+                        <a :href="`mailto:${email}`" class="flex items-center gap-4 group">
                             <div class="w-12 h-12 bg-slate-800/80 rounded-xl flex items-center justify-center border border-slate-700 group-hover:border-emerald-500/50 group-hover:text-emerald-400 transition-colors text-slate-300">
                                 <Mail class="w-6 h-6" />
                             </div>
                             <div>
                                 <p class="text-sm text-slate-500 font-medium">Email</p>
-                                <p class="text-lg text-white font-medium">ahmed.wael1025@gmail.com</p>
+                                <p class="text-lg text-white font-medium group-hover:text-emerald-400 transition-colors">{{ email }}</p>
                             </div>
-                        </div>
+                        </a>
                         
                         <div class="flex items-center gap-4 group">
                             <div class="w-12 h-12 bg-slate-800/80 rounded-xl flex items-center justify-center border border-slate-700 group-hover:border-emerald-500/50 group-hover:text-emerald-400 transition-colors text-slate-300">
@@ -63,19 +80,31 @@ const submit = () => {
                             </div>
                             <div>
                                 <p class="text-sm text-slate-500 font-medium">Location</p>
-                                <p class="text-lg text-white font-medium">Mansoura, Egypt</p>
+                                <p class="text-lg text-white font-medium">{{ location }}</p>
                             </div>
                         </div>
                         
-                        <div class="flex items-center gap-4 group">
+                        <a :href="`tel:${phone}`" class="flex items-center gap-4 group">
                             <div class="w-12 h-12 bg-slate-800/80 rounded-xl flex items-center justify-center border border-slate-700 group-hover:border-emerald-500/50 group-hover:text-emerald-400 transition-colors text-slate-300">
                                 <Phone class="w-6 h-6" />
                             </div>
                             <div>
                                 <p class="text-sm text-slate-500 font-medium">Phone</p>
-                                <p class="text-lg text-white font-medium">+201212808098</p>
+                                <p class="text-lg text-white font-medium group-hover:text-emerald-400 transition-colors">{{ phone }}</p>
                             </div>
-                        </div>
+                        </a>
+
+                        <a :href="whatsappUrl" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 group">
+                            <div class="w-12 h-12 bg-slate-800/80 rounded-xl flex items-center justify-center border border-slate-700 group-hover:border-emerald-500/50 group-hover:text-emerald-400 transition-colors text-slate-300">
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.461c-1.826 0-3.606-.492-5.161-1.424l-.37-.22-3.834 1.006 1.024-3.737-.241-.383A10.37 10.37 0 0 1 2.3 12.002C2.3 6.645 6.645 2.3 12.001 2.3c2.595 0 5.034 1.011 6.87 2.846A9.66 9.66 0 0 1 21.7 12.002c0 5.357-4.345 9.701-9.649 9.701m8.536-18.237A11.93 11.93 0 0 0 12.001 0C5.384 0 .01 5.373.01 11.998c0 2.113.551 4.177 1.597 5.99L0 24l6.155-1.614a11.94 11.94 0 0 0 5.845 1.513h.005c6.616 0 11.99-5.373 11.99-11.999 0-3.206-1.249-6.219-3.517-8.487"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500 font-medium">WhatsApp</p>
+                                <p class="text-lg text-white font-medium group-hover:text-emerald-400 transition-colors">{{ phone }}</p>
+                            </div>
+                        </a>
                     </div>
                 </div>
 

@@ -62,7 +62,12 @@ class PortfolioController extends Controller
             'message' => 'required|string',
         ]);
 
-        \App\Models\Message::create($validated);
+        $message = \App\Models\Message::create($validated);
+
+        $users = \App\Models\User::all();
+        if ($users->isNotEmpty()) {
+            \Illuminate\Support\Facades\Notification::send($users, new \App\Notifications\NewContactMessageNotification($message));
+        }
 
         return redirect()->back()->with('success', 'Message sent successfully!');
     }

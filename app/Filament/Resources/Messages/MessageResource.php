@@ -18,6 +18,27 @@ class MessageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $unreadCount = static::getModel()::where('is_read', false)->count();
+        return $unreadCount > 0 ? (string) $unreadCount : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'danger';
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return MessageForm::configure($form);
@@ -39,8 +60,7 @@ class MessageResource extends Resource
     {
         return [
             'index' => ListMessages::route('/'),
-            'create' => CreateMessage::route('/create'),
-            'edit' => EditMessage::route('/{record}/edit'),
+            'view' => Pages\ViewMessage::route('/{record}'),
         ];
     }
 }

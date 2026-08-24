@@ -4,9 +4,9 @@ namespace App\Filament\Resources\Messages\Pages;
 
 use App\Filament\Resources\Messages\MessageResource;
 use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditMessage extends EditRecord
+class ViewMessage extends ViewRecord
 {
     protected static string $resource = MessageResource::class;
 
