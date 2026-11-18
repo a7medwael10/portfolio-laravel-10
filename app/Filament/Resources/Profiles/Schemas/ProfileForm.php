@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Profiles\Schemas;
 use App\Filament\Forms\Components\ServiceImageUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 
 class ProfileForm
@@ -25,13 +24,13 @@ class ProfileForm
                     ->columnSpanFull(),
                 ServiceImageUpload::make('hero_image', 'Home Page Photo', 'avatars'),
                 ServiceImageUpload::make('avatar', 'About Page Photo', 'avatars'),
-                FileUpload::make('cv')
-                    ->label('CV / Resume File')
-                    ->directory('cvs')
-                    ->disk('public')
-                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                    ->openable()
-                    ->downloadable(),
+                TextInput::make('cv')
+                    ->label('CV Google Drive URL')
+                    ->url()
+                    ->placeholder('https://drive.google.com/file/d/.../view')
+                    ->helperText('Set the Google Drive file sharing to “Anyone with the link” before saving.')
+                    ->prefixIcon('heroicon-m-link')
+                    ->columnSpanFull(),
                 TextInput::make('email')
                     ->label('Email address')
                     ->email(),

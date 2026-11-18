@@ -7,6 +7,34 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Local PHP 8.3 with Docker
+
+Build the PHP image:
+
+```bash
+DOCKER_UID=$(id -u) DOCKER_GID=$(id -g) docker compose build php
+```
+
+Run Artisan or Composer with the same PHP version as production:
+
+```bash
+DOCKER_UID=$(id -u) DOCKER_GID=$(id -g) docker compose run --rm php php artisan optimize:clear
+DOCKER_UID=$(id -u) DOCKER_GID=$(id -g) docker compose run --rm php composer install
+```
+
+Start Laravel on `http://127.0.0.1:8000`:
+
+```bash
+DOCKER_UID=$(id -u) DOCKER_GID=$(id -g) docker compose up php
+```
+
+The Docker service automatically uses file-based cache and sessions, synchronous
+queues, and `host.docker.internal` for a MySQL server running on the host. Override
+the database host when needed with `DOCKER_DB_HOST=...`.
+
+If Docker reports a permission error for `/var/run/docker.sock`, prefix the
+Docker commands with `sudo`, or add the current user to the Docker group.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

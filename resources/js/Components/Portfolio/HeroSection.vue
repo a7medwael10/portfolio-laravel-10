@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowRight, Download, Github, Linkedin, Mail } from "lucide-vue-next";
+import { ArrowRight, ExternalLink, Github, Linkedin, Mail } from "lucide-vue-next";
 
 defineProps({
     profile: {
@@ -71,13 +71,12 @@ const scrollTo = (id) => {
                     <a
                         v-if="profile?.cv_url"
                         :href="profile.cv_url"
-                        download="Ahmed_Wael_Mujahid_CV.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="btn-secondary"
                     >
-                        <Download class="h-4 w-4" aria-hidden="true" />
-                        Download CV
+                        <ExternalLink class="h-4 w-4" aria-hidden="true" />
+                        View CV
                     </a>
 
                     <a

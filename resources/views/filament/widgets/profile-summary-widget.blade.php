@@ -80,24 +80,24 @@
 
             <!-- Col 3: Bio & CV Status -->
             <div class="space-y-2">
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Bio & CV File</h4>
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Bio & CV Link</h4>
                 <p class="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
                     {{ $profile?->bio ?? 'No bio provided yet.' }}
                 </p>
                 <div class="pt-1">
                     @if ($profile?->cv_url)
-                        <a href="{{ $profile->cv_url }}" target="_blank" download
+                        <a href="{{ $profile->cv_url }}" target="_blank" rel="noopener noreferrer"
                             class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-2.5 py-1 rounded-md hover:bg-emerald-100 transition">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    d="M13 5h6m0 0v6m0-6-9 9M5 7v12h12v-5"></path>
                             </svg>
-                            <span>Download CV File</span>
+                            <span>Open CV</span>
                         </a>
                     @else
                         <span
                             class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-2.5 py-1 rounded-md">
-                            <span>No CV Uploaded</span>
+                            <span>No CV Link</span>
                         </span>
                     @endif
                 </div>

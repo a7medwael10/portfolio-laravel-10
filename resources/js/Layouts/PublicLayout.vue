@@ -42,7 +42,7 @@ const navCta = computed(() => {
     if (props.profile?.cv_url) {
         return {
             type: 'cv',
-            label: 'Download CV',
+            label: 'View CV',
             href: props.profile.cv_url,
         };
     }
@@ -158,7 +158,6 @@ onUnmounted(() => {
                                 <a
                                     v-if="navCta.type === 'cv'"
                                     :href="navCta.href"
-                                    download="Ahmed_Wael_Mujahid_CV.pdf"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="btn-primary !min-h-[40px] !px-4 !py-2 text-sm"
@@ -221,7 +220,6 @@ onUnmounted(() => {
                                 <a
                                     v-if="navCta.type === 'cv'"
                                     :href="navCta.href"
-                                    download="Ahmed_Wael_Mujahid_CV.pdf"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="btn-primary w-full"
