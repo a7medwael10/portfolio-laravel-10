@@ -2,6 +2,7 @@
 
 namespace App\Services\Uploads;
 
+use App\Support\MediaAsset;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 
@@ -16,12 +17,17 @@ class PublicUploadDriver implements UploadDriver
 
         $file->move($targetDirectory, $filename);
 
-        return asset($directory.'/'.$filename);
+        return $directory.'/'.$filename;
     }
 
     public function delete(string $pathOrUrl): bool
     {
-        $relativePath = ltrim(parse_url($pathOrUrl, PHP_URL_PATH) ?: $pathOrUrl, '/');
+        $relativePath = MediaAsset::path($pathOrUrl);
+
+        if ($relativePath === null) {
+            return false;
+        }
+
         $filePath = rtrim(config('upload.drivers.public.path', public_path()), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$relativePath;
 
         if (! File::exists($filePath)) {

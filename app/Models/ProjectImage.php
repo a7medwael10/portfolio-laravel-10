@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\DeletesReplacedMedia;
+use App\Support\MediaAsset;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectImage extends Model
 {
-    use HasFactory;
+    use DeletesReplacedMedia, HasFactory;
 
     protected $fillable = ['project_id', 'image_path', 'is_main'];
 
@@ -23,38 +25,13 @@ class ProjectImage extends Model
         return $this->belongsTo(Project::class);
     }
 
+    protected function mediaAttributes(): array
+    {
+        return ['image_path'];
+    }
+
     protected function uploadUrl(?string $path): ?string
     {
-        if (blank($path)) {
-            return null;
-        }
-
-        $path = ltrim($path, '/');
-
-        if (str_contains($path, '://')) {
-            if (filter_var($path, FILTER_VALIDATE_URL)) {
-                return $path;
-            }
-            // Malformed, if starts with 'storage/'
-            if (str_starts_with($path, 'storage/')) {
-                $potentialUrl = substr($path, 8);
-                if (filter_var($potentialUrl, FILTER_VALIDATE_URL)) {
-                    return $potentialUrl;
-                }
-            }
-        }
-
-        // Remove leading storage/
-        if (str_starts_with($path, 'storage/')) {
-            $path = substr($path, 8);
-        }
-
-        // Check if exists in public
-        if (file_exists(public_path($path))) {
-            return asset($path);
-        }
-
-        // Else, assume it's in storage
-        return asset('storage/'.$path);
+        return MediaAsset::url($path);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Services\Uploads;
 
+use App\Support\MediaAsset;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 class StorageUploadDriver implements UploadDriver
 {
@@ -18,12 +18,17 @@ class StorageUploadDriver implements UploadDriver
 
         $file->move($targetDirectory, $filename);
 
-        return asset($directory.'/'.$filename);
+        return $directory.'/'.$filename;
     }
 
     public function delete(string $pathOrUrl): bool
     {
-        $relativePath = ltrim(parse_url($pathOrUrl, PHP_URL_PATH) ?: $pathOrUrl, '/');
+        $relativePath = MediaAsset::path($pathOrUrl);
+
+        if ($relativePath === null) {
+            return false;
+        }
+
         $filePath = public_path($relativePath);
 
         if (!file_exists($filePath)) {

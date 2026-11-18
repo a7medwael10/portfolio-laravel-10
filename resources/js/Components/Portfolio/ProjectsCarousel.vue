@@ -87,7 +87,7 @@ const resolveImage = (project) => {
         if (image.image_path) {
             return image.image_path.startsWith('http')
                 ? image.image_path
-                : `/storage/${image.image_path}`;
+                : `/media/images/${image.image_path.replace(/^storage\//, '')}`;
         }
     }
     return null;

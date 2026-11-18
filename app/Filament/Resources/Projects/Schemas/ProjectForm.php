@@ -37,7 +37,7 @@ class ProjectForm
                     ->visible(fn (Get $get) => $get('type') === ProjectType::COMPANY->value || $get('type') === ProjectType::COMPANY),
                 Textarea::make('description')
                     ->columnSpanFull(),
-                ServiceImageUpload::make('main_image', directory: 'projects'),
+                ServiceImageUpload::make('main_image', 'Main project image', 'projects'),
                 TextInput::make('github_url')
                     ->url(),
                 TextInput::make('live_url')

@@ -3,6 +3,7 @@
 namespace App\Filament\Forms\Components;
 
 use App\Services\UploadService;
+use App\Support\MediaAsset;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Http\UploadedFile;
 use RuntimeException;
@@ -27,9 +28,6 @@ class ServiceImageUpload
                     'type' => null,
                     'url' => self::urlForStoredUpload($file),
                 ];
-            })
-            ->deleteUploadedFileUsing(static function (string $file): void {
-                app(UploadService::class)->delete($file);
             });
 
         if ($label !== null) {
@@ -58,32 +56,6 @@ class ServiceImageUpload
 
     protected static function urlForStoredUpload(string $file): string
     {
-        $path = ltrim($file, '/');
-
-        if (str_contains($path, '://')) {
-            if (filter_var($path, FILTER_VALIDATE_URL)) {
-                return $path;
-            }
-            // Malformed, if starts with 'storage/'
-            if (str_starts_with($path, 'storage/')) {
-                $potentialUrl = substr($path, 8);
-                if (filter_var($potentialUrl, FILTER_VALIDATE_URL)) {
-                    return $potentialUrl;
-                }
-            }
-        }
-
-        // Remove leading storage/
-        if (str_starts_with($path, 'storage/')) {
-            $path = substr($path, 8);
-        }
-
-        // Check if exists in public
-        if (file_exists(public_path($path))) {
-            return asset($path);
-        }
-
-        // Else, assume it's in storage
-        return asset('storage/'.$path);
+        return MediaAsset::url($file) ?? '';
     }
 }

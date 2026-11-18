@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Enums\ProjectType;
+use App\Models\Concerns\DeletesReplacedMedia;
+use App\Support\MediaAsset;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    use HasFactory;
+    use DeletesReplacedMedia, HasFactory;
 
     protected $fillable = ['title', 'slug', 'description', 'type', 'experience_id', 'main_image', 'github_url', 'live_url', 'is_visible'];
 
@@ -39,38 +41,20 @@ class Project extends Model
         return $this->belongsTo(Experience::class);
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Project $project): void {
+            $project->images()->get()->each->delete();
+        });
+    }
+
+    protected function mediaAttributes(): array
+    {
+        return ['main_image'];
+    }
+
     protected function uploadUrl(?string $path): ?string
     {
-        if (blank($path)) {
-            return null;
-        }
-
-        $path = ltrim($path, '/');
-
-        if (str_contains($path, '://')) {
-            if (filter_var($path, FILTER_VALIDATE_URL)) {
-                return $path;
-            }
-            // Malformed, if starts with 'storage/'
-            if (str_starts_with($path, 'storage/')) {
-                $potentialUrl = substr($path, 8);
-                if (filter_var($potentialUrl, FILTER_VALIDATE_URL)) {
-                    return $potentialUrl;
-                }
-            }
-        }
-
-        // Remove leading storage/
-        if (str_starts_with($path, 'storage/')) {
-            $path = substr($path, 8);
-        }
-
-        // Check if exists in public
-        if (file_exists(public_path($path))) {
-            return asset($path);
-        }
-
-        // Else, assume it's in storage
-        return asset('storage/'.$path);
+        return MediaAsset::url($path);
     }
 }
