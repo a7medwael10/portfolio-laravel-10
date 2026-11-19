@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick, onUnmounted } from 'vue';
 import {
     ChevronLeft,
     ChevronRight,
@@ -9,6 +9,7 @@ import {
     Briefcase,
     User,
     FolderGit2,
+    X,
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -28,6 +29,9 @@ const startX = ref(0);
 const startY = ref(0);
 const dragDeltaX = ref(0);
 const isSwipingHorizontal = ref(false);
+const wasDragged = ref(false);
+const selectedProject = ref(null);
+const closeButton = ref(null);
 
 const count = computed(() => props.projects?.length || 0);
 
@@ -116,6 +120,7 @@ const handlePointerDown = (e) => {
     dragDeltaX.value = 0;
     isDragging.value = true;
     isSwipingHorizontal.value = false;
+    wasDragged.value = false;
 };
 
 const handlePointerMove = (e) => {
@@ -136,6 +141,7 @@ const handlePointerMove = (e) => {
 
     if (isSwipingHorizontal.value) {
         dragDeltaX.value = deltaX;
+        wasDragged.value = Math.abs(deltaX) > 8;
     }
 };
 
@@ -155,14 +161,49 @@ const handlePointerUp = () => {
 };
 
 const handleCardClick = (index, offset, e) => {
-    if (Math.abs(dragDeltaX.value) > 8) {
+    if (wasDragged.value) {
         e?.preventDefault();
+        wasDragged.value = false;
         return;
     }
     if (offset !== 0) {
         goTo(index);
+        return;
+    }
+
+    selectedProject.value = props.projects[index];
+    nextTick(() => closeButton.value?.focus());
+};
+
+const closeProject = () => {
+    selectedProject.value = null;
+};
+
+const handleCardKeydown = (index, offset) => {
+    if (offset === 0) {
+        selectedProject.value = props.projects[index];
+        nextTick(() => closeButton.value?.focus());
     }
 };
+
+const handleEscape = (event) => {
+    if (event.key === 'Escape' && selectedProject.value) {
+        closeProject();
+    }
+};
+
+watch(selectedProject, (project) => {
+    document.body.style.overflow = project ? 'hidden' : '';
+});
+
+if (typeof document !== 'undefined') {
+    document.addEventListener('keydown', handleEscape);
+}
+
+onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape);
+    document.body.style.overflow = '';
+});
 </script>
 
 <template>
@@ -214,7 +255,7 @@ const handleCardClick = (index, offset, e) => {
             </button>
 
             <!-- Cards Grid Stage -->
-            <div class="carousel-stage relative grid grid-cols-1 items-stretch justify-items-center w-full min-h-[460px]">
+            <div class="carousel-stage relative grid grid-cols-1 items-stretch justify-items-center w-full min-h-[360px] sm:min-h-[400px]">
                 <article
                     v-for="(project, index) in projects"
                     :key="project.id || index"
@@ -222,15 +263,20 @@ const handleCardClick = (index, offset, e) => {
                     :class="{
                         'is-active': getOffset(index) === 0,
                         'is-dragging': isDragging,
-                        'cursor-pointer': getOffset(index) !== 0,
+                        'cursor-pointer': true,
                     }"
                     :data-offset="getOffset(index)"
                     :aria-hidden="getOffset(index) !== 0"
+                    :aria-label="getOffset(index) === 0 ? `View details for ${project.title}` : undefined"
+                    :tabindex="getOffset(index) === 0 ? 0 : -1"
+                    :role="getOffset(index) === 0 ? 'button' : undefined"
                     :style="{
                         '--card-offset': getOffset(index),
                         '--drag-x': `${dragDeltaX}px`,
                     }"
                     @click="handleCardClick(index, getOffset(index), $event)"
+                    @keydown.enter.prevent="handleCardKeydown(index, getOffset(index))"
+                    @keydown.space.prevent="handleCardKeydown(index, getOffset(index))"
                 >
                     <!-- Project Image -->
                     <div class="relative aspect-[16/10] w-full overflow-hidden bg-surface-elevated shrink-0">
@@ -269,53 +315,9 @@ const handleCardClick = (index, offset, e) => {
                             {{ project.title }}
                         </h3>
 
-                        <!-- Description -->
-                        <p class="mt-3 flex-1 text-content-secondary leading-relaxed text-sm sm:text-base line-clamp-3 sm:line-clamp-4">
-                            {{ project.description }}
-                        </p>
-
-                        <!-- Technology Tags -->
-                        <div
-                            v-if="project.skills?.length"
-                            class="mt-5 flex flex-wrap gap-1.5 sm:gap-2"
-                        >
-                            <span
-                                v-for="skill in project.skills"
-                                :key="skill.id || skill.name"
-                                class="skill-tag text-xs"
-                            >
-                                {{ skill.name }}
-                            </span>
-                        </div>
-
-                        <!-- Permanent Action Buttons -->
-                        <div class="mt-6 flex flex-wrap gap-3 pt-2">
-                            <a
-                                v-if="project.github_url"
-                                :href="project.github_url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="btn-secondary !min-h-[40px] !px-4 !py-2 text-xs sm:text-sm font-semibold"
-                                :aria-label="`View ${project.title} on GitHub`"
-                                :tabindex="getOffset(index) === 0 ? 0 : -1"
-                                @click.stop
-                            >
-                                <Github class="h-4 w-4" aria-hidden="true" />
-                                <span>GitHub</span>
-                            </a>
-                            <a
-                                v-if="project.live_url"
-                                :href="project.live_url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="btn-primary !min-h-[40px] !px-4 !py-2 text-xs sm:text-sm font-semibold"
-                                :aria-label="`View live demo of ${project.title}`"
-                                :tabindex="getOffset(index) === 0 ? 0 : -1"
-                                @click.stop
-                            >
-                                <ExternalLink class="h-4 w-4" aria-hidden="true" />
-                                <span>Live demo</span>
-                            </a>
+                        <div class="mt-auto flex items-center justify-between gap-3 pt-6 text-sm font-semibold text-primary">
+                            <span>View project details</span>
+                            <ExternalLink class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                         </div>
                     </div>
                 </article>
@@ -369,6 +371,106 @@ const handleCardClick = (index, offset, e) => {
                 </button>
             </div>
         </div>
+
+        <Teleport to="body">
+            <Transition name="project-modal">
+                <div
+                    v-if="selectedProject"
+                    class="project-modal-backdrop fixed inset-0 z-[100] overflow-y-auto bg-black/75 px-4 py-6 backdrop-blur-sm sm:px-6 sm:py-10"
+                    role="presentation"
+                    @mousedown.self="closeProject"
+                >
+                    <section
+                        class="project-modal-panel relative mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-line bg-surface-elevated shadow-2xl"
+                        role="dialog"
+                        aria-modal="true"
+                        :aria-labelledby="`project-modal-title-${selectedProject.id}`"
+                    >
+                        <button
+                            ref="closeButton"
+                            type="button"
+                            class="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white transition hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-primary sm:right-4 sm:top-4"
+                            aria-label="Close project details"
+                            @click="closeProject"
+                        >
+                            <X class="h-5 w-5" aria-hidden="true" />
+                        </button>
+
+                        <div class="relative aspect-[16/9] w-full overflow-hidden bg-canvas-deep">
+                            <img
+                                v-if="resolveImage(selectedProject)"
+                                :src="resolveImage(selectedProject)"
+                                :alt="`${selectedProject.title} project screenshot`"
+                                class="h-full w-full object-cover"
+                                width="1200"
+                                height="675"
+                            />
+                            <div v-else class="flex h-full items-center justify-center">
+                                <FolderGit2 class="h-14 w-14 text-content-muted/50" aria-hidden="true" />
+                            </div>
+                            <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent" />
+                        </div>
+
+                        <div class="p-6 sm:p-8">
+                            <div class="mb-3 inline-flex items-center gap-2 text-sm font-medium text-content-muted">
+                                <component :is="getTypeMeta(selectedProject).icon" class="h-4 w-4 text-primary" aria-hidden="true" />
+                                <span>{{ getTypeMeta(selectedProject).label }}</span>
+                            </div>
+
+                            <h2
+                                :id="`project-modal-title-${selectedProject.id}`"
+                                class="text-2xl font-bold tracking-tight text-content sm:text-3xl"
+                            >
+                                {{ selectedProject.title }}
+                            </h2>
+
+                            <div class="mt-6">
+                                <h3 class="text-sm font-bold uppercase tracking-wider text-content-muted">About the project</h3>
+                                <p class="mt-3 whitespace-pre-line text-base leading-7 text-content-secondary">
+                                    {{ selectedProject.description || 'No project description is available yet.' }}
+                                </p>
+                            </div>
+
+                            <div v-if="selectedProject.skills?.length" class="mt-7">
+                                <h3 class="text-sm font-bold uppercase tracking-wider text-content-muted">Technologies & skills</h3>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span
+                                        v-for="skill in selectedProject.skills"
+                                        :key="skill.id || skill.name"
+                                        class="skill-tag text-sm"
+                                    >
+                                        {{ skill.name }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div v-if="selectedProject.github_url || selectedProject.live_url" class="mt-8 flex flex-wrap gap-3 border-t border-line pt-6">
+                                <a
+                                    v-if="selectedProject.github_url"
+                                    :href="selectedProject.github_url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn-secondary"
+                                >
+                                    <Github class="h-4 w-4" aria-hidden="true" />
+                                    <span>GitHub</span>
+                                </a>
+                                <a
+                                    v-if="selectedProject.live_url"
+                                    :href="selectedProject.live_url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn-primary"
+                                >
+                                    <ExternalLink class="h-4 w-4" aria-hidden="true" />
+                                    <span>Live demo</span>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </Transition>
+        </Teleport>
     </div>
 </template>
 
@@ -403,6 +505,32 @@ const handleCardClick = (index, offset, e) => {
 
 .carousel-card.is-dragging {
     transition: none !important;
+}
+
+.carousel-card:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+}
+
+.project-modal-enter-active,
+.project-modal-leave-active {
+    transition: opacity 200ms ease;
+}
+
+.project-modal-enter-active .project-modal-panel,
+.project-modal-leave-active .project-modal-panel {
+    transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.project-modal-enter-from,
+.project-modal-leave-to {
+    opacity: 0;
+}
+
+.project-modal-enter-from .project-modal-panel,
+.project-modal-leave-to .project-modal-panel {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.98);
 }
 
 /* Base Mobile view (1 full card) */
