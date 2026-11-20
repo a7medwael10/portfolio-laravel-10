@@ -14,6 +14,7 @@ class ServiceImageUpload
     {
         $component = FileUpload::make($name)
             ->image()
+            ->fetchFileInformation(false)
             ->maxSize((int) config('upload.max_size', 2048))
             ->saveUploadedFileUsing(static function (UploadedFile $file) use ($directory): string {
                 return app(UploadService::class)->upload(
