@@ -2,16 +2,22 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Throwable;
 
-class Maintenance extends Page
+class Maintenance extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
     protected static ?string $navigationLabel = 'Maintenance';
@@ -22,13 +28,142 @@ class Maintenance extends Page
 
     protected static string $view = 'filament.pages.maintenance';
 
+    public ?array $data = [];
+
     public ?string $lastCommand = null;
 
     public ?string $lastOutput = null;
 
     public ?bool $lastSuccess = null;
 
-    public function runCommand(string $command, array $parameters = []): void
+    public function mount(): void
+    {
+        $this->form->fill([
+            'command' => 'migrate',
+            'seeder' => null,
+        ]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('command')
+                    ->label('Command')
+                    ->options([
+                        'migrate' => 'migrate — Run pending migrations',
+                        'optimize-clear' => 'optimize:clear — Clear all caches',
+                        'seed' => 'db:seed — Run database seeders',
+                        'storage-link' => 'storage:link — Create storage symlink',
+                        'queue-work' => 'queue:work — Process pending queue jobs',
+                        'queue-restart' => 'queue:restart — Restart queue workers',
+                        'rollback' => 'migrate:rollback — Rollback last migration batch',
+                        'migrate-fresh' => 'migrate:fresh — Drop all tables & re-run migrations (DANGEROUS)',
+                    ])
+                    ->required()
+                    ->live()
+                    ->native(false),
+
+                Select::make('seeder')
+                    ->label('Seeder Class')
+                    ->placeholder('All (DatabaseSeeder)')
+                    ->options($this->availableSeeders())
+                    ->visible(fn (Get $get): bool => $get('command') === 'seed')
+                    ->helperText('Leave empty to run DatabaseSeeder, or select a specific seeder.')
+                    ->native(false),
+            ])
+            ->statePath('data');
+    }
+
+    public function execute(): void
+    {
+        $state = $this->form->getState();
+        $command = $state['command'] ?? null;
+
+        if (! is_string($command) || $command === '') {
+            Notification::make()->title('Please select a command')->danger()->send();
+
+            return;
+        }
+
+        $seeder = $state['seeder'] ?? null;
+
+        if ($command === 'seed' && is_string($seeder) && $seeder !== '') {
+            if (! preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $seeder)) {
+                Notification::make()->title('Invalid seeder class name')->danger()->send();
+
+                return;
+            }
+
+            $class = "Database\\Seeders\\{$seeder}";
+            if (! class_exists($class) || ! is_subclass_of($class, Seeder::class)) {
+                Notification::make()->title("Seeder {$seeder} does not exist")->danger()->send();
+
+                return;
+            }
+
+            $this->runCommand('db:seed', ['--class' => $class, '--force' => true]);
+
+            return;
+        }
+
+        [$artisanCommand, $parameters] = match ($command) {
+            'migrate' => ['migrate', ['--force' => true]],
+            'migrate-fresh' => ['migrate:fresh', ['--force' => true]],
+            'rollback' => ['migrate:rollback', ['--force' => true]],
+            'seed' => ['db:seed', ['--force' => true]],
+            'optimize-clear' => ['optimize:clear', []],
+            'queue-work' => [
+                'queue:work',
+                [
+                    '--stop-when-empty' => true,
+                    '--tries' => 1,
+                    '--timeout' => 30,
+                    '--sleep' => 1,
+                ],
+            ],
+            'queue-restart' => ['queue:restart', []],
+            'storage-link' => ['storage:link', []],
+            default => [null, []],
+        };
+
+        if ($artisanCommand === null) {
+            Notification::make()->title('Unsupported command')->danger()->send();
+
+            return;
+        }
+
+        $this->runCommand($artisanCommand, $parameters);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function availableSeeders(): array
+    {
+        $seedersPath = database_path('seeders');
+
+        if (! File::isDirectory($seedersPath)) {
+            return [];
+        }
+
+        $options = [];
+
+        foreach (File::files($seedersPath) as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $name = $file->getFilenameWithoutExtension();
+            $options[$name] = $name;
+        }
+
+        ksort($options);
+
+        return $options;
+    }
+
+    protected function runCommand(string $command, array $parameters = []): void
     {
         try {
             $exitCode = Artisan::call($command, $parameters);
@@ -60,99 +195,5 @@ class Maintenance extends Page
                 ->danger()
                 ->send();
         }
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('migrate')
-                ->label('Run Migrate')
-                ->icon('heroicon-m-circle-stack')
-                ->color('primary')
-                ->requiresConfirmation()
-                ->modalDescription('Run pending database migrations with --force.')
-                ->action(fn () => $this->runCommand('migrate', ['--force' => true])),
-
-            Action::make('optimizeClear')
-                ->label('Optimize Clear')
-                ->icon('heroicon-m-sparkles')
-                ->color('info')
-                ->action(fn () => $this->runCommand('optimize:clear')),
-
-            Action::make('seed')
-                ->label('Run Seed')
-                ->icon('heroicon-m-beaker')
-                ->color('warning')
-                ->form([
-                    TextInput::make('seeder')
-                        ->label('Seeder Class (Optional)')
-                        ->placeholder('DatabaseSeeder')
-                        ->helperText('Leave empty to run DatabaseSeeder, or enter class name under Database\\Seeders\\.'),
-                ])
-                ->action(function (array $data): void {
-                    $seeder = trim((string) ($data['seeder'] ?? ''));
-
-                    if ($seeder !== '') {
-                        if (! preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $seeder)) {
-                            Notification::make()->title('Invalid seeder class name')->danger()->send();
-
-                            return;
-                        }
-
-                        $class = "Database\\Seeders\\{$seeder}";
-                        if (! class_exists($class) || ! is_subclass_of($class, Seeder::class)) {
-                            Notification::make()->title("Seeder {$seeder} does not exist")->danger()->send();
-
-                            return;
-                        }
-
-                        $this->runCommand('db:seed', ['--class' => $class, '--force' => true]);
-
-                        return;
-                    }
-
-                    $this->runCommand('db:seed', ['--force' => true]);
-                }),
-
-            Action::make('storageLink')
-                ->label('Storage Link')
-                ->icon('heroicon-m-link')
-                ->color('gray')
-                ->action(fn () => $this->runCommand('storage:link')),
-
-            Action::make('queueWork')
-                ->label('Queue Work')
-                ->icon('heroicon-m-play')
-                ->color('success')
-                ->action(fn () => $this->runCommand('queue:work', [
-                    '--stop-when-empty' => true,
-                    '--tries' => 1,
-                    '--timeout' => 30,
-                    '--sleep' => 1,
-                ])),
-
-            Action::make('queueRestart')
-                ->label('Queue Restart')
-                ->icon('heroicon-m-arrow-path')
-                ->color('gray')
-                ->action(fn () => $this->runCommand('queue:restart')),
-
-            Action::make('rollback')
-                ->label('Rollback')
-                ->icon('heroicon-m-arrow-uturn-left')
-                ->color('danger')
-                ->requiresConfirmation()
-                ->modalDescription('This will roll back the last batch of migrations on the server.')
-                ->action(fn () => $this->runCommand('migrate:rollback', ['--force' => true])),
-
-            Action::make('migrateFresh')
-                ->label('Migrate Fresh')
-                ->icon('heroicon-m-exclamation-triangle')
-                ->color('danger')
-                ->requiresConfirmation()
-                ->modalHeading('Drop all tables and re-run migrations?')
-                ->modalDescription('WARNING: This permanently deletes all database data and recreates all tables.')
-                ->action(fn () => $this->runCommand('migrate:fresh', ['--force' => true])),
-        ];
     }
 }
