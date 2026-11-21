@@ -11,10 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->string('type')->nullable()->default('freelance')->after('description');
-            $table->foreignId('experience_id')->nullable()->after('type')->constrained('experiences')->nullOnDelete();
-        });
+        $hasType = Schema::hasColumn('projects', 'type');
+        $hasExperienceId = Schema::hasColumn('projects', 'experience_id');
+
+        if (! $hasType || ! $hasExperienceId) {
+            Schema::table('projects', function (Blueprint $table) use ($hasType, $hasExperienceId) {
+                if (! $hasType) {
+                    $table->string('type')->nullable()->default('freelance')->after('description');
+                }
+                if (! $hasExperienceId) {
+                    $table->foreignId('experience_id')->nullable()->after('type')->constrained('experiences')->nullOnDelete();
+                }
+            });
+        }
     }
 
     /**
@@ -23,8 +32,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->dropForeign(['experience_id']);
-            $table->dropColumn(['experience_id', 'type']);
+            if (Schema::hasColumn('projects', 'experience_id')) {
+                $table->dropForeign(['experience_id']);
+                $table->dropColumn('experience_id');
+            }
+            if (Schema::hasColumn('projects', 'type')) {
+                $table->dropColumn('type');
+            }
         });
     }
 };

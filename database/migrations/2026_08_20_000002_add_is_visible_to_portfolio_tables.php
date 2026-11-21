@@ -14,9 +14,11 @@ return new class extends Migration
         $tables = ['projects', 'skills', 'skill_categories', 'experiences', 'education'];
 
         foreach ($tables as $tableName) {
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->boolean('is_visible')->default(true);
-            });
+            if (! Schema::hasColumn($tableName, 'is_visible')) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->boolean('is_visible')->default(true);
+                });
+            }
         }
     }
 
@@ -28,9 +30,11 @@ return new class extends Migration
         $tables = ['projects', 'skills', 'skill_categories', 'experiences', 'education'];
 
         foreach ($tables as $tableName) {
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->dropColumn('is_visible');
-            });
+            if (Schema::hasColumn($tableName, 'is_visible')) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->dropColumn('is_visible');
+                });
+            }
         }
     }
 };
