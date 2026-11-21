@@ -11,6 +11,12 @@
                     tag="a" color="primary" size="sm" icon="heroicon-m-pencil-square">
                     Edit Profile Data
                 </x-filament::button>
+            @else
+                <x-filament::button
+                    href="{{ \App\Filament\Resources\Profiles\ProfileResource::getUrl('create') }}"
+                    tag="a" color="primary" size="sm" icon="heroicon-m-plus">
+                    Create Profile
+                </x-filament::button>
             @endif
         </x-slot>
 

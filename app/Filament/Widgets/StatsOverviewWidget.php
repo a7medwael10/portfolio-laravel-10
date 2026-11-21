@@ -2,6 +2,10 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Experiences\ExperienceResource;
+use App\Filament\Resources\Messages\MessageResource;
+use App\Filament\Resources\Projects\ProjectResource;
+use App\Filament\Resources\Skills\SkillResource;
 use App\Models\Experience;
 use App\Models\Message;
 use App\Models\Project;
@@ -23,27 +27,32 @@ class StatsOverviewWidget extends BaseWidget
         $skillsCount = Skill::count();
         $experiencesCount = Experience::count();
         $messagesCount = Message::count();
+        $unreadMessagesCount = Message::where('is_read', false)->count();
 
         return [
             Stat::make('Total Projects', $projectsCount)
                 ->description('Published portfolio projects')
-                ->descriptionIcon('heroicon-m-rectangle-stack')
-                ->color('indigo'),
+                ->descriptionIcon('heroicon-m-folder-open')
+                ->color('primary')
+                ->url(ProjectResource::getUrl('index')),
 
             Stat::make('Total Skills', $skillsCount)
                 ->description('Technical skills cataloged')
-                ->descriptionIcon('heroicon-m-code-bracket')
-                ->color('cyan'),
+                ->descriptionIcon('heroicon-m-cpu-chip')
+                ->color('info')
+                ->url(SkillResource::getUrl('index')),
 
             Stat::make('Work Experiences', $experiencesCount)
                 ->description('Career history entries')
                 ->descriptionIcon('heroicon-m-briefcase')
-                ->color('purple'),
+                ->color('warning')
+                ->url(ExperienceResource::getUrl('index')),
 
             Stat::make('Received Messages', $messagesCount)
-                ->description('Contact form submissions')
+                ->description($unreadMessagesCount > 0 ? "{$unreadMessagesCount} unread" : 'All messages read')
                 ->descriptionIcon('heroicon-m-envelope')
-                ->color('emerald'),
+                ->color($unreadMessagesCount > 0 ? 'danger' : 'success')
+                ->url(MessageResource::getUrl('index')),
         ];
     }
 }
