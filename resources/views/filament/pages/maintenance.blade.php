@@ -38,7 +38,21 @@
                     Output: php artisan {{ $lastCommand }}
                 </x-slot>
 
-                <pre class="overflow-x-auto rounded-lg bg-gray-950 p-4 text-xs font-mono text-gray-100 whitespace-pre-wrap">{{ $lastOutput }}</pre>
+                <x-slot name="headerEnd">
+                    <x-filament::button
+                        type="button"
+                        size="sm"
+                        color="gray"
+                        icon="heroicon-m-clipboard-document"
+                        x-data="{ copied: false }"
+                        x-on:click="navigator.clipboard.writeText($refs.commandOutput.innerText); copied = true; setTimeout(() => copied = false, 2000)"
+                    >
+                        <span x-show="!copied">Copy Output</span>
+                        <span x-show="copied" x-cloak>Copied!</span>
+                    </x-filament::button>
+                </x-slot>
+
+                <pre x-ref="commandOutput" class="overflow-x-auto rounded-lg bg-gray-950 p-4 text-xs font-mono text-gray-100 whitespace-pre-wrap">{{ $lastOutput }}</pre>
             </x-filament::section>
         @endif
     </div>

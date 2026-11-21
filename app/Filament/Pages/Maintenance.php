@@ -2,6 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Education;
+use App\Models\Experience;
+use App\Models\Profile;
+use App\Models\Project;
+use App\Models\SkillCategory;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -54,6 +59,7 @@ class Maintenance extends Page implements HasForms
                         'migrate' => 'migrate — Run pending migrations',
                         'optimize-clear' => 'optimize:clear — Clear all caches',
                         'seed' => 'db:seed — Run database seeders',
+                        'export-portfolio' => 'export:portfolio — Export portfolio data as JSON',
                         'storage-link' => 'storage:link — Create storage symlink',
                         'queue-work' => 'queue:work — Process pending queue jobs',
                         'queue-restart' => 'queue:restart — Restart queue workers',
@@ -82,6 +88,12 @@ class Maintenance extends Page implements HasForms
 
         if (! is_string($command) || $command === '') {
             Notification::make()->title('Please select a command')->danger()->send();
+
+            return;
+        }
+
+        if ($command === 'export-portfolio') {
+            $this->exportPortfolioData();
 
             return;
         }
@@ -161,6 +173,38 @@ class Maintenance extends Page implements HasForms
         ksort($options);
 
         return $options;
+    }
+
+    protected function exportPortfolioData(): void
+    {
+        try {
+            $payload = [
+                'profiles' => Profile::all()->toArray(),
+                'education' => Education::all()->toArray(),
+                'experiences' => Experience::all()->toArray(),
+                'projects' => Project::with('skills:id,name')->get()->toArray(),
+                'skill_categories' => SkillCategory::with('skills')->get()->toArray(),
+            ];
+
+            $this->lastCommand = 'export:portfolio';
+            $this->lastOutput = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '{}';
+            $this->lastSuccess = true;
+
+            Notification::make()
+                ->title('Portfolio data exported as JSON')
+                ->success()
+                ->send();
+        } catch (Throwable $exception) {
+            $this->lastCommand = 'export:portfolio';
+            $this->lastOutput = $exception->getMessage();
+            $this->lastSuccess = false;
+
+            Notification::make()
+                ->title('Export failed')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 
     protected function runCommand(string $command, array $parameters = []): void
