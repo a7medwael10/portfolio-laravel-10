@@ -13,7 +13,9 @@ Route::get('/skills', [PortfolioController::class, 'skills'])->name('skills');
 Route::get('/experience', [PortfolioController::class, 'experience'])->name('experience');
 Route::get('/projects', [PortfolioController::class, 'projects'])->name('projects');
 Route::get('/contact', [PortfolioController::class, 'contact'])->name('contact');
-Route::post('/contact', [PortfolioController::class, 'storeMessage'])->name('contact.store');
+Route::post('/contact', [PortfolioController::class, 'storeMessage'])
+    ->middleware('throttle:5,1')
+    ->name('contact.store');
 
 Route::get('/media/images/{path}', MediaImageController::class)
     ->where('path', '.*')

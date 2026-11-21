@@ -7,6 +7,14 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
+    <!-- Open Graph / Social Meta -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ahmed Wael | Software Engineer & Full-Stack Developer">
+    <meta property="og:description" content="Software Engineer and Full-Stack Developer building scalable web applications, reliable APIs, and modern user experiences.">
+    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="twitter:card" content="summary_large_image">
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/images/logo.png">
 

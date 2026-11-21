@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { Head, useForm } from "@inertiajs/vue3";
 import PublicLayout from "@/Layouts/PublicLayout.vue";
 import HeroSection from "@/Components/Portfolio/HeroSection.vue";
@@ -8,7 +9,7 @@ import ExperienceSection from "@/Components/Portfolio/ExperienceSection.vue";
 import ProjectsSection from "@/Components/Portfolio/ProjectsSection.vue";
 import ContactSection from "@/Components/Portfolio/ContactSection.vue";
 
-defineProps({
+const props = defineProps({
     profile: {
         type: Object,
         default: () => ({}),
@@ -90,15 +91,51 @@ const scrollToSection = (id) => {
         });
     }
 };
+const seoTitle = computed(() => {
+    const name = props.profile?.name || "Ahmed Wael";
+    const title = props.profile?.title || "Software Engineer & Full-Stack Developer";
+    return `${name} | ${title}`;
+});
+
+const seoDescription = computed(
+    () =>
+        props.profile?.bio ||
+        "Software Engineer and Full-Stack Developer building scalable web applications, reliable APIs, and modern user experiences."
+);
+
+const ogImage = computed(
+    () => props.profile?.hero_image_url || props.profile?.avatar_url || "/images/logo.png"
+);
 </script>
 
 <template>
-    <Head title="Ahmed Wael | Software Engineer & Full-Stack Developer">
+    <Head :title="seoTitle">
         <meta
             head-key="description"
             name="description"
-            content="Software Engineer and Full-Stack Developer building scalable web applications, reliable APIs, and modern user experiences."
+            :content="seoDescription"
         />
+        <meta head-key="og:type" property="og:type" content="website" />
+        <meta head-key="og:title" property="og:title" :content="seoTitle" />
+        <meta
+            head-key="og:description"
+            property="og:description"
+            :content="seoDescription"
+        />
+        <meta head-key="og:image" property="og:image" :content="ogImage" />
+        <meta head-key="og:url" property="og:url" :content="route('home')" />
+        <meta
+            head-key="twitter:card"
+            name="twitter:card"
+            content="summary_large_image"
+        />
+        <meta head-key="twitter:title" name="twitter:title" :content="seoTitle" />
+        <meta
+            head-key="twitter:description"
+            name="twitter:description"
+            :content="seoDescription"
+        />
+        <meta head-key="twitter:image" name="twitter:image" :content="ogImage" />
     </Head>
 
     <PublicLayout :profile="profile">
