@@ -30,26 +30,26 @@ class StatsOverviewWidget extends BaseWidget
         $unreadMessagesCount = Message::where('is_read', false)->count();
 
         return [
-            Stat::make('Total Projects', $projectsCount)
-                ->description('Published portfolio projects')
+            Stat::make(__('Total Projects'), $projectsCount)
+                ->description(__('Published portfolio projects'))
                 ->descriptionIcon('heroicon-m-folder-open')
                 ->color('primary')
                 ->url(ProjectResource::getUrl('index')),
 
-            Stat::make('Total Skills', $skillsCount)
-                ->description('Technical skills cataloged')
+            Stat::make(__('Total Skills'), $skillsCount)
+                ->description(__('Technical skills cataloged'))
                 ->descriptionIcon('heroicon-m-cpu-chip')
                 ->color('info')
                 ->url(SkillResource::getUrl('index')),
 
-            Stat::make('Work Experiences', $experiencesCount)
-                ->description('Career history entries')
+            Stat::make(__('Work Experiences'), $experiencesCount)
+                ->description(__('Career history entries'))
                 ->descriptionIcon('heroicon-m-briefcase')
                 ->color('warning')
                 ->url(ExperienceResource::getUrl('index')),
 
-            Stat::make('Received Messages', $messagesCount)
-                ->description($unreadMessagesCount > 0 ? "{$unreadMessagesCount} unread" : 'All messages read')
+            Stat::make(__('Received Messages'), $messagesCount)
+                ->description($unreadMessagesCount > 0 ? __(':count unread', ['count' => $unreadMessagesCount]) : __('All messages read'))
                 ->descriptionIcon('heroicon-m-envelope')
                 ->color($unreadMessagesCount > 0 ? 'danger' : 'success')
                 ->url(MessageResource::getUrl('index')),

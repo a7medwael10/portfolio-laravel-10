@@ -18,6 +18,21 @@ class MessageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
 
+    public static function getModelLabel(): string
+    {
+        return __('Message');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Messages');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Messages');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         $unreadCount = static::getModel()::where('is_read', false)->count();

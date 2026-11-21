@@ -20,6 +20,21 @@ class ProfileResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getModelLabel(): string
+    {
+        return __('Profile');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Profiles');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Profile');
+    }
+
     public static function form(Form $form): Form
     {
         return ProfileForm::configure($form);

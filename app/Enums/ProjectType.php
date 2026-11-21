@@ -14,9 +14,9 @@ enum ProjectType: string implements HasLabel, HasColor
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::COMPANY => 'Company Experience Project',
-            self::FREELANCE => 'Freelance Project',
-            self::PERSONAL => 'Personal Project',
+            self::COMPANY => __('Company Experience Project'),
+            self::FREELANCE => __('Freelance Project'),
+            self::PERSONAL => __('Personal Project'),
         };
     }
 

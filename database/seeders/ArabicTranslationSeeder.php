@@ -6,6 +6,7 @@ use App\Models\Education;
 use App\Models\Experience;
 use App\Models\Profile;
 use App\Models\Project;
+use App\Models\Skill;
 use App\Models\SkillCategory;
 use Illuminate\Database\Seeder;
 
@@ -15,26 +16,26 @@ class ArabicTranslationSeeder extends Seeder
     {
         if ($profile = Profile::first()) {
             $profile->update([
-                'name_ar' => 'أحمد وائل مجاهد',
-                'title_ar' => 'مطور واجهات خلفية (Backend Developer)',
+                'name_ar' => 'أحمد وائل',
+                'title_ar' => 'مهندس برمجيات',
                 'bio_ar' => 'بناء أنظمة خلفية قابلة للتوسع وتحسين واجهات برمجة التطبيقات RESTful APIs للتطبيقات الحديثة.',
-                'about_text_ar' => 'مطور Backend بخبرة قوية في PHP (Laravel)، وبناء وتحسين RESTful APIs وأنظمة خلفية قابلة للتوسع. عملت على تطبيقات واقعية تشمل منصات متعددة البائعين، وأنظمة لوجستية، وواجهات برمجة لتطبيقات الموبايل، مع المساهمة في تطوير الميزات الأساسية وتحسين الأداء. ماهر في تصميم قواعد البيانات، وهندسة الأنظمة، وربط الـ APIs، مع تركيز قوي على كتابة كود نظيف وقابل للصيانة.',
-                'location_ar' => 'المنصورة، مصر',
+                'about_text_ar' => "أنا أحمد وائل، مطور Full-Stack متخصص في استخدام Laravel لتطوير الواجهات الخلفية (Backend) وReact لبناء واجهات مستخدم حديثة وسريعة الاستجابة.\n\nلدي خبرة في تطوير تطبيقات ويب قابلة للتوسع، وواجهات برمجة التطبيقات RESTful APIs، ولوحات التحكم الإدارية، والربط مع الخدمات الخارجية. كما أقوم بتصميم وتحسين قواعد البيانات باستخدام MySQL وMongoDB مع تطبيق مبادئ OOP وSOLID ومعايير الكود النظيف.\n\nعملت على مشاريع متنوعة تشمل أنظمة إدارة المطاعم، ومنصات التجارة الإلكترونية، والتطبيقات التعليمية، والحلول اللوجستية، وأنظمة الحجوزات. أركز على تقديم حلول برمجية آمنة وقابلة للصيانة وسهلة الاستخدام لحل مشكلات الأعمال الواقعية.",
+                'location_ar' => 'مصر',
             ]);
         }
 
         $educationTranslations = [
-            'Professional Training Program' => [
-                'degree_ar' => 'برنامج التدريب الاحترافي',
+            'Information Technology Institute (ITI)' => [
+                'degree_ar' => 'برنامج التدريب الاحترافي (9 أشهر)',
                 'institution_ar' => 'معهد تكنولوجيا المعلومات (ITI)',
                 'location_ar' => 'المنصورة، مصر',
                 'field_of_study_ar' => 'مسار تطوير التطبيقات مفتوحة المصدر (Open-Source Applications Development)',
                 'description_ar' => [
-                    'إتمام تدريب مكثف في أساسيات هندسة البرمجيات بما في ذلك OOP وقواعد البيانات وأنظمة التشغيل وتطوير الويب ضمن مسار تطوير التطبيقات مفتوحة المصدر.',
-                    'اكتساب خبرة عملية في التقنيات الحديثة مثل PHP وPython وNode.js وMySQL وMongoDB وأطر عمل JavaScript وDocker وLinux وREST APIs لبناء تطبيقات قابلة للتوسع.',
+                    'تدريب مكثف في هندسة البرمجيات يشمل OOP وقواعد البيانات وأنظمة التشغيل وتطوير الويب وتقنيات الـ Backend مثل PHP وNode.js وMySQL وMongoDB وDocker وLinux وREST APIs.',
+                    'مشروع التخرج: RestoMind – نظام ERP مدعوم بالذكاء الاصطناعي للمطاعم والمخابز مع التنبؤ بالطلب وإدارة المخزون ومساعد ذكي وسوق لتصريف الفائض.',
                 ],
             ],
-            'B.Sc. Computer and Control Systems Engineering' => [
+            'Faculty Of Engineering, Mansoura University' => [
                 'degree_ar' => 'بكالوريوس هندسة الحاسبات ونظم التحكم',
                 'institution_ar' => 'كلية الهندسة، جامعة المنصورة',
                 'location_ar' => 'المنصورة، مصر',
@@ -46,8 +47,8 @@ class ArabicTranslationSeeder extends Seeder
             ],
         ];
 
-        foreach ($educationTranslations as $degree => $data) {
-            Education::where('degree', $degree)->update($data);
+        foreach ($educationTranslations as $institution => $data) {
+            Education::where('institution', $institution)->update($data);
         }
 
         $experienceTranslations = [
@@ -56,9 +57,7 @@ class ArabicTranslationSeeder extends Seeder
                 'company_ar' => 'متقنة (Mutqana)',
                 'work_location_ar' => 'عن بُعد',
                 'description_ar' => [
-                    'تطوير RESTful APIs باستخدام Laravel وMySQL لتطبيقات الويب والموبايل وبناء الأنظمة الخلفية من الصفر.',
-                    'إعادة هيكلة وتحسين الكود القديم لرفع الأداء وتحسين القراءة وقابلية الصيانة.',
-                    'تنفيذ ميزات ومنطق أعمال جديد مع تعزيز استقرار النظام عبر تتبع الأخطاء والتعاون مع الفريق.',
+                    'تطوير واجهات برمجة تطبيقات RESTful APIs باستخدام Laravel وMySQL لتطبيقات الويب والموبايل، وإعادة هيكلة الكود القديم لتحسين الأداء وقابلية الصيانة، وتنفيذ ميزات ومنطق أعمال جديد مع ضمان استقرار النظام عبر تتبع الأخطاء والتعاون مع الفريق.',
                 ],
             ],
             'Jadara' => [
@@ -66,9 +65,7 @@ class ArabicTranslationSeeder extends Seeder
                 'company_ar' => 'جدارة (Jadara)',
                 'work_location_ar' => 'المنصورة، مصر',
                 'description_ar' => [
-                    'تطوير وصيانة الميزات الخلفية لتطبيقات الشركة باستخدام Laravel وMySQL.',
-                    'بناء وربط REST APIs لدعم منصات الويب وتطبيقات الموبايل.',
-                    'التعاون مع فرق الواجهة الأمامية والموبايل لتقديم حلول برمجية موثوقة.',
+                    'تطوير وصيانة الميزات الخلفية باستخدام Laravel وMySQL، وبناء وربط RESTful APIs لمنصات الويب والموبايل، والتعاون مع الفرق متعددة التخصصات لتقديم حلول برمجية موثوقة.',
                 ],
             ],
             'Huma-volve' => [
@@ -76,9 +73,7 @@ class ArabicTranslationSeeder extends Seeder
                 'company_ar' => 'Huma-volve',
                 'work_location_ar' => 'عن بُعد',
                 'description_ar' => [
-                    'اكتساب خبرة عملية في Laravel وتطوير RESTful APIs وتصميم قواعد البيانات وإدارة النسخ عبر Git.',
-                    'المشاركة في مراجعات الكود والاجتماعات اليومية ومهام الفريق وفق منهجية Agile.',
-                    'العمل بشكل وثيق مع الموجهين والمتدربين لتسليم ميزات خلفية مطابقة لمتطلبات المشروع.',
+                    'خبرة عملية في Laravel وتطوير RESTful APIs وتصميم قواعد البيانات وGit، والمساهمة في تطوير الميزات الخلفية ضمن فريق عمل بمنهجية Agile ومراجعات الكود والتعاون مع الموجهين.',
                 ],
             ],
             'Digital Egypt Pioneers Initiative - DEPI' => [
@@ -86,9 +81,21 @@ class ArabicTranslationSeeder extends Seeder
                 'company_ar' => 'مبادرة رواد مصر الرقمية (DEPI)',
                 'work_location_ar' => 'المنصورة، مصر',
                 'description_ar' => [
-                    'اكتساب خبرة عملية في PHP وLaravel وMySQL أثناء تطوير تطبيقات الويب.',
-                    'العمل على تطوير الواجهة الخلفية وتحسين قواعد البيانات وربط الـ APIs لرفع أداء النظام.',
-                    'تطوير مهارات التواصل المهني عبر مسار Business English في Berlitz Egypt.',
+                    'تدريب عملي في PHP وLaravel وMySQL مع التركيز على تطوير الواجهات الخلفية وتحسين قواعد البيانات وربط الـ APIs، إلى جانب تطوير مهارات التواصل التقني باللغة الإنجليزية للأعمال.',
+                ],
+            ],
+            'Information Technology Institute (ITI)' => [
+                'title_ar' => 'متدرب',
+                'company_ar' => 'معهد تكنولوجيا المعلومات (ITI)',
+                'work_location_ar' => 'المنصورة',
+                'description_ar' => [],
+            ],
+            'Qader' => [
+                'title_ar' => 'مطور واجهات خلفية (Backend Developer)',
+                'company_ar' => 'قادر (Qader)',
+                'work_location_ar' => '6 أكتوبر، مصر',
+                'description_ar' => [
+                    'تطوير واجهات Laravel REST APIs قابلة للتوسع لمنصة قادر للتوظيف وسوق الكفاءات، بما يشمل تصميم قواعد البيانات ومسارات العمل متعددة الأدوار وإدارة المواهب وعمليات التوظيف والربط مع الخدمات الخارجية والاختبارات الآلية.',
                 ],
             ],
         ];
@@ -114,6 +121,26 @@ class ArabicTranslationSeeder extends Seeder
                 'title_ar' => 'نظام إدارة الفنادق',
                 'description_ar' => 'تطوير واجهة العميل بما يشمل الصفحة الرئيسية وقوائم الغرف ومسار الحجز، وربط بوابة الدفع Stripe باستخدام Laravel وVue 3 وInertia.',
             ],
+            'amanak' => [
+                'title_ar' => 'أمانك — نظام إدارة النقدية والمحافظ متعدد المتاجر',
+                'description_ar' => 'تطوير الواجهة الخلفية بـ Laravel وواجهات RESTful APIs لعمليات المتاجر المتعددة، وإدارة المحافظ والنقدية، والتحويلات والمعاملات والاشتراكات، وربط بوابات الدفع، ونظام الصلاحيات المبني على الأدوار (RBAC).',
+            ],
+            'spia' => [
+                'title_ar' => 'منصة Spia',
+                'description_ar' => 'تطوير الوحدات الأساسية في Laravel لمنصة SPIA، بما يشمل إدارة الإعلانات والفعاليات ومسارات الاشتراك، والاختبارات الإلكترونية المحددة بوقت مع التصحيح التلقائي وتوصيات المستوى، واشتراكات الباقات عبر التحويل البنكي. مع بناء لوحة التحكم وواجهات المستخدم بـ Blade والتحقق من المدخلات ودعم تعدد اللغات.',
+            ],
+            'maqaad' => [
+                'title_ar' => 'مقعد (Maqaad)',
+                'description_ar' => 'بناء تطبيق ويب بـ Laravel لمنصة مقعد يضم الموقع العام (المقاعد، طلبات تركيب المقاعد، المدونة، الأخبار، المعرض، الأسئلة الشائعة، التطوع، المساهمات، ونماذج التواصل)، مع دمج لوحة تحكم Filament مخصصة بصفحات وموارد وودجات لإدارة كامل محتوى الموقع والشركاء والسلايدر والإعدادات وطلبات المستخدمين.',
+            ],
+            'restomind' => [
+                'title_ar' => 'RestoMind',
+                'description_ar' => 'توليت دور مهندس الواجهة الخلفية لـ RestoMind API، وقمت بتطوير منظومة NestJS متعددة المستأجرين (Multi-tenant) على مستوى المؤسسات، تضم نظام أمان RBAC، وإدارة طلبات متعددة المطاعم، وتتبع المخزون وسلاسل الإمداد بنظام FIFO، وتخطيط الإنتاج اليومي، ومحرك توقعات ومساعد ذكي يعتمد على الذكاء الاصطناعي وRAG.',
+            ],
+            'qader-api' => [
+                'title_ar' => 'Qader API',
+                'description_ar' => 'هندسة وتطوير نظام خلفي معياري بـ Laravel باستخدام Domain-Driven Design وClean Architecture وRESTful APIs وDocker والاختبارات الآلية عبر مسارات العمل الأساسية للمنصة.',
+            ],
         ];
 
         foreach ($projectTranslations as $slug => $data) {
@@ -121,16 +148,31 @@ class ArabicTranslationSeeder extends Seeder
         }
 
         $categoryTranslations = [
-            'Programming Languages' => 'لغات البرمجة',
+            'Concepts' => 'المفاهيم البرمجية',
             'Backend Development' => 'تطوير الواجهات الخلفية (Backend)',
             'Frontend Development' => 'تطوير الواجهات الأمامية (Frontend)',
             'Databases' => 'قواعد البيانات',
-            'Frameworks & Libraries' => 'أطر العمل والمكتبات',
+            'Familiar With' => 'تقنيات أتعامل معها',
             'Tools & Environment' => 'الأدوات وبيئة العمل',
+            'AI Development Tools' => 'أدوات التطوير بالذكاء الاصطناعي',
         ];
 
         foreach ($categoryTranslations as $name => $nameAr) {
             SkillCategory::where('name', $name)->update(['name_ar' => $nameAr]);
+        }
+
+        $skillTranslations = [
+            'OOP,' => 'البرمجة كائنية التوجه (OOP)',
+            'SOLID Principles' => 'مبادئ SOLID',
+            'Design Patterns' => 'أنماط التصميم (Design Patterns)',
+            'Data Structures & Algorithms' => 'هياكل البيانات والخوارزميات',
+            'MVC Architecture' => 'معمارية MVC',
+            'Database Design' => 'تصميم قواعد البيانات',
+            'Query Optimization' => 'تحسين الاستعلامات',
+        ];
+
+        foreach ($skillTranslations as $name => $nameAr) {
+            Skill::where('name', $name)->update(['name_ar' => $nameAr]);
         }
     }
 }

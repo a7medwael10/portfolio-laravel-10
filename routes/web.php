@@ -18,6 +18,14 @@ Route::post('/contact', [PortfolioController::class, 'storeMessage'])
     ->middleware('throttle:5,1')
     ->name('contact.store');
 
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['en', 'ar'], true)) {
+        session(['locale' => $locale]);
+    }
+
+    return redirect()->back();
+})->name('locale.switch');
+
 Route::get('/media/images/{path}', MediaImageController::class)
     ->where('path', '.*')
     ->withoutMiddleware([

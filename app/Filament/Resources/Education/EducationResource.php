@@ -18,6 +18,21 @@ class EducationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
+    public static function getModelLabel(): string
+    {
+        return __('Education');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Educations');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Education');
+    }
+
     public static function form(Form $form): Form
     {
         return EducationForm::configure($form);

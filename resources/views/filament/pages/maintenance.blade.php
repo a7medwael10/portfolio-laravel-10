@@ -5,11 +5,11 @@
             icon-color="primary"
         >
             <x-slot name="heading">
-                Run Artisan Command
+                {{ __('Run Artisan Command') }}
             </x-slot>
 
             <x-slot name="description">
-                Choose a maintenance command from the list and configure its options before running.
+                {{ __('Choose a maintenance command from the list and configure its options before running.') }}
             </x-slot>
 
             <form wire:submit="execute" class="space-y-6">
@@ -22,8 +22,8 @@
                         :color="in_array($data['command'] ?? '', ['rollback', 'migrate-fresh'], true) ? 'danger' : 'primary'"
                         wire:loading.attr="disabled"
                     >
-                        <span wire:loading.remove wire:target="execute">Run Command</span>
-                        <span wire:loading wire:target="execute">Running...</span>
+                        <span wire:loading.remove wire:target="execute">{{ __('Run Command') }}</span>
+                        <span wire:loading wire:target="execute">{{ __('Running...') }}</span>
                     </x-filament::button>
                 </div>
             </form>
@@ -47,12 +47,12 @@
                         x-data="{ copied: false }"
                         x-on:click="navigator.clipboard.writeText($refs.commandOutput.innerText); copied = true; setTimeout(() => copied = false, 2000)"
                     >
-                        <span x-show="!copied">Copy Output</span>
-                        <span x-show="copied" x-cloak>Copied!</span>
+                        <span x-show="!copied">{{ __('Copy Output') }}</span>
+                        <span x-show="copied" x-cloak>{{ __('Copied!') }}</span>
                     </x-filament::button>
                 </x-slot>
 
-                <pre x-ref="commandOutput" class="overflow-x-auto rounded-lg bg-gray-950 p-4 text-xs font-mono text-gray-100 whitespace-pre-wrap">{{ $lastOutput }}</pre>
+                <pre dir="ltr" x-ref="commandOutput" class="overflow-x-auto rounded-lg bg-gray-950 p-4 text-xs font-mono text-gray-100 whitespace-pre-wrap">{{ $lastOutput }}</pre>
             </x-filament::section>
         @endif
     </div>

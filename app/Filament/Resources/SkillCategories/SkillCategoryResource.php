@@ -18,6 +18,21 @@ class SkillCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
+    public static function getModelLabel(): string
+    {
+        return __('Skill Category');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Skill Categories');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Skill Categories');
+    }
+
     public static function form(Form $form): Form
     {
         return SkillCategoryForm::configure($form);

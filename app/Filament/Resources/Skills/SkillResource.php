@@ -18,6 +18,21 @@ class SkillResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
 
+    public static function getModelLabel(): string
+    {
+        return __('Skill');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Skills');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Skills');
+    }
+
     public static function form(Form $form): Form
     {
         return SkillForm::configure($form);

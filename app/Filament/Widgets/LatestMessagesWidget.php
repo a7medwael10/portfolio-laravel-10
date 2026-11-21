@@ -21,32 +21,36 @@ class LatestMessagesWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
+            ->heading(__('Latest Messages'))
             ->query(Message::query()->latest()->limit(5))
             ->paginated(false)
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('Name'))
                     ->weight('medium')
                     ->searchable(false),
                 TextColumn::make('email')
+                    ->label(__('Email'))
                     ->color('gray')
                     ->copyable(),
                 TextColumn::make('message')
+                    ->label(__('Message'))
                     ->limit(60)
                     ->tooltip(fn (Message $record): string => $record->message),
                 IconColumn::make('is_read')
-                    ->label('Read')
+                    ->label(__('Read'))
                     ->boolean(),
                 TextColumn::make('created_at')
-                    ->label('Received')
+                    ->label(__('Received'))
                     ->since(),
             ])
             ->actions([
                 Action::make('view')
-                    ->label('View')
+                    ->label(__('View'))
                     ->icon('heroicon-m-eye')
                     ->url(fn (Message $record): string => MessageResource::getUrl('view', ['record' => $record])),
             ])
-            ->emptyStateHeading('No messages yet')
-            ->emptyStateDescription('Messages sent from your portfolio contact form will appear here.');
+            ->emptyStateHeading(__('No messages yet'))
+            ->emptyStateDescription(__('Messages sent from your portfolio contact form will appear here.'));
     }
 }

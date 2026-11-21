@@ -33,6 +33,16 @@ class Maintenance extends Page implements HasForms
 
     protected static string $view = 'filament.pages.maintenance';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('Maintenance');
+    }
+
+    public function getTitle(): string
+    {
+        return __('Server Maintenance');
+    }
+
     public ?array $data = [];
 
     public ?string $lastCommand = null;

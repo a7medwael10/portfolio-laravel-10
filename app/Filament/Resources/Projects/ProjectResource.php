@@ -18,6 +18,21 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-folder-open';
 
+    public static function getModelLabel(): string
+    {
+        return __('Project');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Projects');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Projects');
+    }
+
     public static function form(Form $form): Form
     {
         return ProjectForm::configure($form);
