@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Skills\Schemas;
 
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -22,6 +23,12 @@ class SkillForm
                 \Filament\Forms\Components\Toggle::make('is_visible')
                     ->label('Visible on Portfolio')
                     ->default(true),
+                Section::make('Arabic Translation (الترجمة العربية)')
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('name_ar')
+                            ->label('Name (Arabic)'),
+                    ]),
             ]);
     }
 }

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import SectionHeader from '@/Components/Portfolio/SectionHeader.vue';
+import { useLocale } from '@/Composables/useLocale';
 
 const props = defineProps({
     categories: {
@@ -8,6 +9,8 @@ const props = defineProps({
         default: () => [],
     },
 });
+
+const { t, localized } = useLocale();
 
 const processedCategories = computed(() => {
     if (!props.categories || !props.categories.length) return [];
@@ -73,9 +76,9 @@ const gridCols = computed(() => {
 <template>
     <section id="skills" class="portfolio-section">
         <SectionHeader
-            label="Expertise"
-            title="Technical Skills"
-            description="My core stack includes PHP, Laravel, Node.js, NestJS, JavaScript, React, Vue.js, and Next.js, supported by MySQL, MongoDB, Docker, and Git to build secure, scalable, and maintainable applications."
+            :label="t('skills.label')"
+            :title="t('skills.title')"
+            :description="t('skills.description')"
         />
 
         <div
@@ -92,10 +95,10 @@ const gridCols = computed(() => {
                 <div class="mb-5 flex items-start justify-between gap-4 border-b border-line pb-4">
                     <div>
                         <h3 class="text-lg font-semibold text-content sm:text-xl">
-                            {{ category.name }}
+                            {{ localized(category, 'name') }}
                         </h3>
                         <span class="mt-1 inline-block text-xs font-mono text-primary font-medium">
-                            {{ category.skillCount }} {{ category.skillCount === 1 ? 'skill' : 'skills' }}
+                            {{ category.skillCount }} {{ category.skillCount === 1 ? t('skills.skillSingular') : t('skills.skillPlural') }}
                         </span>
                     </div>
                     <span
@@ -112,7 +115,7 @@ const gridCols = computed(() => {
                         :key="skill.id"
                         class="skill-tag"
                     >
-                        {{ skill.name }}
+                        {{ localized(skill, 'name') }}
                     </span>
                 </div>
             </article>

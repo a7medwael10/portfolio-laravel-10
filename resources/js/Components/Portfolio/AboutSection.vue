@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { ExternalLink, GraduationCap, MapPin } from 'lucide-vue-next';
+import { useLocale } from '@/Composables/useLocale';
 
 const props = defineProps({
     profile: {
@@ -17,16 +18,10 @@ const props = defineProps({
     },
 });
 
-const defaultAboutParagraphs = [
-    'I’m Ahmed Wael, a Full-Stack Developer specializing in building scalable web applications using Laravel for backend development and React for modern, responsive user interfaces.',
-    'I have hands-on experience developing RESTful APIs, designing and optimizing MySQL and MongoDB databases, integrating third-party services, and building secure, maintainable systems. I follow clean-code practices and apply OOP, SOLID principles, and design patterns to create reliable solutions that can grow with business needs.',
-    'I have worked on various projects, including restaurant management systems, e-commerce platforms, educational applications, reservation systems, logistics solutions, and administrative dashboards.',
-    'My primary technologies include PHP, Laravel, JavaScript, React, Blade, Bootstrap, Tailwind CSS, MySQL, MongoDB, Git, Docker, and Linux. I’m also familiar with Vue.js, Filament, Express.js, Django, and AI-powered application development.',
-    'I’m passionate about solving real-world problems, continuously improving my skills, and delivering high-quality products with strong performance, security, and user experience.',
-];
+const { t, localized } = useLocale();
 
 const aboutParagraphs = computed(() => {
-    const source = props.profile?.about_text || props.profile?.bio;
+    const source = localized(props.profile, 'about_text') || localized(props.profile, 'bio');
     if (source && String(source).trim()) {
         const parts = String(source)
             .split(/\n\n+/)
@@ -34,7 +29,7 @@ const aboutParagraphs = computed(() => {
             .filter(Boolean);
         return parts.length ? parts : [String(source).trim()];
     }
-    return defaultAboutParagraphs;
+    return t('about.defaultParagraphs');
 });
 </script>
 
@@ -43,17 +38,17 @@ const aboutParagraphs = computed(() => {
         <div class="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
                 <p class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-                    About
+                    {{ t('about.label') }}
                 </p>
                 <h2 class="text-3xl font-bold tracking-tight text-content sm:text-4xl md:text-5xl">
-                    About Me
+                    {{ t('about.title') }}
                 </h2>
                 <div
-                    v-if="profile?.location"
+                    v-if="localized(profile, 'location')"
                     class="mt-4 inline-flex items-center gap-2 text-content-muted"
                 >
                     <MapPin class="h-4 w-4 text-primary" aria-hidden="true" />
-                    <span>{{ profile.location }}</span>
+                    <span>{{ localized(profile, 'location') }}</span>
                 </div>
             </div>
 
@@ -71,23 +66,23 @@ const aboutParagraphs = computed(() => {
         <div v-if="education?.length" class="mt-16 md:mt-20">
             <div class="mb-8 flex items-center gap-3">
                 <GraduationCap class="h-6 w-6 text-primary" aria-hidden="true" />
-                <h3 class="text-2xl font-bold text-content sm:text-3xl">Education</h3>
+                <h3 class="text-2xl font-bold text-content sm:text-3xl">{{ t('about.education') }}</h3>
             </div>
 
-            <ol class="relative space-y-0 border-l border-line pl-6 md:pl-8">
+            <ol class="relative space-y-0 border-s border-line ps-6 md:ps-8">
                 <li
                     v-for="edu in education"
                     :key="edu.id"
                     class="relative pb-10 last:pb-0"
                 >
                     <span
-                        class="absolute -left-[1.9rem] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-primary bg-canvas md:-left-[2.15rem]"
+                        class="absolute -start-[1.9rem] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-primary bg-canvas md:-start-[2.15rem]"
                         aria-hidden="true"
                     />
 
                     <div class="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
                         <h4 class="text-lg font-semibold text-content sm:text-xl">
-                            {{ edu.degree }}
+                            {{ localized(edu, 'degree') }}
                         </h4>
                         <p class="shrink-0 text-sm text-content-muted">
                             {{ formatDate(edu.start_date) }} – {{ formatDate(edu.end_date) }}
@@ -102,38 +97,38 @@ const aboutParagraphs = computed(() => {
                             rel="noopener noreferrer"
                             class="inline-flex items-center gap-1.5 font-medium text-primary transition-colors hover:text-primary-hover"
                         >
-                            {{ edu.institution }}
+                            {{ localized(edu, 'institution') }}
                             <ExternalLink class="h-3.5 w-3.5" aria-hidden="true" />
-                            <span class="sr-only">(opens in new tab)</span>
+                            <span class="sr-only">{{ t('about.opensInNewTab') }}</span>
                         </a>
-                        <p v-else class="font-medium text-primary">{{ edu.institution }}</p>
+                        <p v-else class="font-medium text-primary">{{ localized(edu, 'institution') }}</p>
 
                         <p
-                            v-if="edu.location"
+                            v-if="localized(edu, 'location')"
                             class="inline-flex items-center gap-1.5 text-sm text-content-muted"
                         >
                             <MapPin class="h-3.5 w-3.5" aria-hidden="true" />
-                            {{ edu.location }}
+                            {{ localized(edu, 'location') }}
                         </p>
                     </div>
 
                     <div class="mt-3 space-y-1 text-sm text-content-muted">
-                        <p v-if="edu.field_of_study">
-                            Track:
-                            <span class="text-content-secondary">{{ edu.field_of_study }}</span>
+                        <p v-if="localized(edu, 'field_of_study')">
+                            {{ t('about.track') }}:
+                            <span class="text-content-secondary">{{ localized(edu, 'field_of_study') }}</span>
                         </p>
-                        <p v-if="edu.grade">
-                            Grade:
-                            <span class="text-content-secondary">{{ edu.grade }}</span>
+                        <p v-if="localized(edu, 'grade')">
+                            {{ t('about.grade') }}:
+                            <span class="text-content-secondary">{{ localized(edu, 'grade') }}</span>
                         </p>
                     </div>
 
                     <ul
-                        v-if="edu.description?.length"
+                        v-if="localized(edu, 'description')?.length"
                         class="mt-4 space-y-2"
                     >
                         <li
-                            v-for="(point, idx) in edu.description"
+                            v-for="(point, idx) in localized(edu, 'description')"
                             :key="idx"
                             class="flex items-start gap-2 text-content-secondary"
                         >

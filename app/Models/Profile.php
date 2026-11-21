@@ -11,7 +11,7 @@ class Profile extends Model
 {
     use DeletesReplacedMedia, HasFactory;
 
-    protected $fillable = ['name', 'title', 'bio', 'about_text', 'avatar', 'hero_image', 'email', 'phone', 'github_url', 'linkedin_url', 'location', 'cv'];
+    protected $fillable = ['name', 'name_ar', 'title', 'title_ar', 'bio', 'bio_ar', 'about_text', 'about_text_ar', 'avatar', 'hero_image', 'email', 'phone', 'github_url', 'linkedin_url', 'location', 'location_ar', 'cv'];
 
     protected $appends = ['avatar_url', 'hero_image_url', 'cv_url'];
 

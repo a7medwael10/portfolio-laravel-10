@@ -8,6 +8,9 @@ import SkillsSection from "@/Components/Portfolio/SkillsSection.vue";
 import ExperienceSection from "@/Components/Portfolio/ExperienceSection.vue";
 import ProjectsSection from "@/Components/Portfolio/ProjectsSection.vue";
 import ContactSection from "@/Components/Portfolio/ContactSection.vue";
+import { useLocale } from "@/Composables/useLocale";
+
+const { locale, t, localized } = useLocale();
 
 const props = defineProps({
     profile: {
@@ -33,9 +36,9 @@ const props = defineProps({
 });
 
 const formatDate = (dateString) => {
-    if (!dateString) return "Present";
+    if (!dateString) return t("dates.present");
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString(locale.value === "ar" ? "ar-EG" : "en-US", {
         year: "numeric",
         month: "short",
     });
@@ -92,15 +95,14 @@ const scrollToSection = (id) => {
     }
 };
 const seoTitle = computed(() => {
-    const name = props.profile?.name || "Ahmed Wael";
-    const title = props.profile?.title || "Software Engineer & Full-Stack Developer";
+    const name = localized(props.profile, "name") || t("hero.defaultName");
+    const title = localized(props.profile, "title") || t("hero.defaultTitle");
     return `${name} | ${title}`;
 });
 
 const seoDescription = computed(
     () =>
-        props.profile?.bio ||
-        "Software Engineer and Full-Stack Developer building scalable web applications, reliable APIs, and modern user experiences."
+        localized(props.profile, "bio") || t("seo.defaultDescription")
 );
 
 const ogImage = computed(

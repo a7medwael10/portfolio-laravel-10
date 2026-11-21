@@ -18,7 +18,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/images/logo.png">
 
-    <!-- Prevent theme flash before Vue mounts -->
+    <!-- Prevent theme & locale flash before Vue mounts -->
     <script>
         (function() {
             try {
@@ -30,12 +30,20 @@
             } catch (e) {
                 document.documentElement.setAttribute('data-theme', 'dark');
             }
+
+            try {
+                var locale = localStorage.getItem('portfolio-locale');
+                if (locale === 'ar' || locale === 'en') {
+                    document.documentElement.setAttribute('lang', locale);
+                    document.documentElement.setAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr');
+                }
+            } catch (e) {}
         })();
     </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|cairo:400,500,600,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
     @routes

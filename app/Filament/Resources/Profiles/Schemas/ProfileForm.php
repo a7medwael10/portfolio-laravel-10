@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Profiles\Schemas;
 
 use App\Filament\Forms\Components\ServiceImageUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
@@ -41,6 +42,23 @@ class ProfileForm
                 TextInput::make('linkedin_url')
                     ->url(),
                 TextInput::make('location'),
+                Section::make('Arabic Translation (الترجمة العربية)')
+                    ->collapsible()
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name_ar')
+                            ->label('Name (Arabic)'),
+                        TextInput::make('title_ar')
+                            ->label('Title (Arabic)'),
+                        TextInput::make('location_ar')
+                            ->label('Location (Arabic)'),
+                        Textarea::make('bio_ar')
+                            ->label('Short Bio (Arabic)')
+                            ->columnSpanFull(),
+                        Textarea::make('about_text_ar')
+                            ->label('Extended Bio (Arabic)')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

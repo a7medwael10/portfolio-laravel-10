@@ -1,7 +1,8 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { Github, Linkedin, Menu, Moon, Sun, X } from 'lucide-vue-next';
+import { Github, Globe, Linkedin, Menu, Moon, Sun, X } from 'lucide-vue-next';
 import { useTheme } from '@/Composables/useTheme';
+import { useLocale } from '@/Composables/useLocale';
 
 const props = defineProps({
     profile: {
@@ -13,15 +14,16 @@ const props = defineProps({
 const isMenuOpen = ref(false);
 const activeSection = ref('home');
 const { theme, toggleTheme } = useTheme();
+const { toggleLocale, t, localized } = useLocale();
 
-const navLinks = [
-    { name: 'Home', id: 'home', href: '#home' },
-    { name: 'About', id: 'about', href: '#about' },
-    { name: 'Skills', id: 'skills', href: '#skills' },
-    { name: 'Experience', id: 'experience', href: '#experience' },
-    { name: 'Projects', id: 'projects', href: '#projects' },
-    { name: 'Contact', id: 'contact', href: '#contact' },
-];
+const navLinks = computed(() => [
+    { name: t('nav.home'), id: 'home', href: '#home' },
+    { name: t('nav.about'), id: 'about', href: '#about' },
+    { name: t('nav.skills'), id: 'skills', href: '#skills' },
+    { name: t('nav.experience'), id: 'experience', href: '#experience' },
+    { name: t('nav.projects'), id: 'projects', href: '#projects' },
+    { name: t('nav.contact'), id: 'contact', href: '#contact' },
+]);
 
 const prefersReducedMotion = () =>
     typeof window !== 'undefined' &&
@@ -42,20 +44,20 @@ const navCta = computed(() => {
     if (props.profile?.cv_url) {
         return {
             type: 'cv',
-            label: 'View CV',
+            label: t('nav.viewCv'),
             href: props.profile.cv_url,
         };
     }
     return {
         type: 'talk',
-        label: 'Let’s Talk',
+        label: t('nav.letsTalk'),
         href: '#contact',
     };
 });
 
 const currentYear = new Date().getFullYear();
 const themeLabel = computed(() =>
-    theme.value === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    theme.value === 'dark' ? t('nav.switchToLight') : t('nav.switchToDark')
 );
 
 let observer = null;
@@ -77,7 +79,7 @@ onMounted(() => {
         { threshold: 0.2, rootMargin: '-80px 0px -40% 0px' }
     );
 
-    navLinks.forEach((link) => {
+    navLinks.value.forEach((link) => {
         const el = document.getElementById(link.id);
         if (el) observer.observe(el);
     });
@@ -97,7 +99,7 @@ onUnmounted(() => {
             class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-btn focus:bg-primary focus:px-4 focus:py-2 focus:text-white"
             @click.prevent="scrollToSection('home')"
         >
-            Skip to content
+            {{ t('skipToContent') }}
         </a>
 
         <header class="fixed inset-x-0 top-0 z-50">
@@ -135,6 +137,17 @@ onUnmounted(() => {
                         </div>
 
                         <div class="flex items-center gap-2">
+                            <button
+                                type="button"
+                                class="inline-flex h-10 items-center gap-1.5 rounded-btn border border-line px-3 text-xs font-semibold text-content-secondary transition-colors hover:border-line-hover hover:text-content"
+                                :aria-label="t('nav.switchLanguage')"
+                                :title="t('nav.switchLanguage')"
+                                @click="toggleLocale"
+                            >
+                                <Globe class="h-4 w-4" aria-hidden="true" />
+                                <span>{{ t('nav.langButton') }}</span>
+                            </button>
+
                             <button
                                 type="button"
                                 class="theme-toggle"
@@ -179,7 +192,7 @@ onUnmounted(() => {
                                 class="inline-flex h-11 w-11 items-center justify-center rounded-btn border border-line text-content-secondary transition-colors hover:border-line-hover hover:text-content md:hidden"
                                 :aria-expanded="isMenuOpen"
                                 aria-controls="mobile-nav"
-                                :aria-label="isMenuOpen ? 'Close menu' : 'Open menu'"
+                                :aria-label="isMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')"
                                 @click="isMenuOpen = !isMenuOpen"
                             >
                                 <Menu v-if="!isMenuOpen" class="h-5 w-5" aria-hidden="true" />
@@ -262,15 +275,15 @@ onUnmounted(() => {
                         />
                         <div>
                             <p class="font-semibold text-content">
-                                {{ profile?.name || 'Ahmed Wael' }}
+                                {{ localized(profile, 'name') || t('hero.defaultName') }}
                             </p>
                             <p class="text-sm text-content-muted">
-                                {{ profile?.title || 'Software Engineer & Full-Stack Developer' }}
+                                {{ localized(profile, 'title') || t('hero.defaultTitle') }}
                             </p>
                         </div>
                     </div>
                     <p class="text-xs text-content-muted">
-                        Engineering scalable systems and modern web experiences.
+                        {{ t('footer.tagline') }}
                     </p>
                 </div>
 
@@ -285,7 +298,7 @@ onUnmounted(() => {
                             target="_blank"
                             rel="noopener noreferrer"
                             class="inline-flex h-11 w-11 items-center justify-center rounded-btn border border-line text-content-muted transition-colors hover:border-line-hover hover:text-content"
-                            aria-label="GitHub profile"
+                            :aria-label="t('hero.githubProfile')"
                         >
                             <Github class="h-5 w-5" aria-hidden="true" />
                         </a>
@@ -295,13 +308,13 @@ onUnmounted(() => {
                             target="_blank"
                             rel="noopener noreferrer"
                             class="inline-flex h-11 w-11 items-center justify-center rounded-btn border border-line text-content-muted transition-colors hover:border-line-hover hover:text-content"
-                            aria-label="LinkedIn profile"
+                            :aria-label="t('hero.linkedinProfile')"
                         >
                             <Linkedin class="h-5 w-5" aria-hidden="true" />
                         </a>
                     </div>
                     <p class="text-sm text-content-muted">
-                        &copy; {{ currentYear }} {{ profile?.name || 'Ahmed Wael' }}. All rights reserved.
+                        &copy; {{ currentYear }} {{ localized(profile, 'name') || t('hero.defaultName') }}. {{ t('footer.rights') }}
                     </p>
                 </div>
             </div>

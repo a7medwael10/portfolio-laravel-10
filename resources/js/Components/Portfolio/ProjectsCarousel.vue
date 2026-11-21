@@ -11,6 +11,9 @@ import {
     FolderGit2,
     X,
 } from 'lucide-vue-next';
+import { useLocale } from '@/Composables/useLocale';
+
+const { locale, t, localized } = useLocale();
 
 const props = defineProps({
     projects: {
@@ -98,17 +101,17 @@ const resolveImage = (project) => {
 };
 
 const getTypeMeta = (project) => {
-    if (!project) return { label: 'Project', icon: Briefcase };
+    if (!project) return { label: t('projects.project'), icon: Briefcase };
     if (project.experience || project.type === 'company') {
         return {
-            label: project.experience ? project.experience.company : 'Company Experience',
+            label: project.experience ? localized(project.experience, 'company') : t('projects.companyExperience'),
             icon: Building2,
         };
     }
     if (project.type === 'personal') {
-        return { label: 'Personal Project', icon: User };
+        return { label: t('projects.personalProject'), icon: User };
     }
-    return { label: 'Freelance', icon: Briefcase };
+    return { label: t('projects.freelance'), icon: Briefcase };
 };
 
 const handlePointerDown = (e) => {
@@ -219,13 +222,14 @@ onUnmounted(() => {
         <!-- Empty State -->
         <div v-if="count === 0" class="portfolio-card p-12 text-center my-8">
             <p class="text-content-muted text-lg font-medium">
-                No projects available at the moment.
+                {{ t('projects.noProjects') }}
             </p>
         </div>
 
         <!-- Carousel Stage -->
         <div
             v-else
+            dir="ltr"
             class="carousel-container relative w-full overflow-x-clip px-1 py-6 sm:py-8"
             @pointerdown="handlePointerDown"
             @pointermove="handlePointerMove"
@@ -238,7 +242,7 @@ onUnmounted(() => {
                 v-if="count > 1"
                 type="button"
                 class="carousel-nav-btn prev-btn hidden lg:flex"
-                aria-label="Previous project"
+                :aria-label="t('projects.prevProject')"
                 @click="prev"
             >
                 <ChevronLeft class="h-6 w-6" aria-hidden="true" />
@@ -248,7 +252,7 @@ onUnmounted(() => {
                 v-if="count > 1"
                 type="button"
                 class="carousel-nav-btn next-btn hidden lg:flex"
-                aria-label="Next project"
+                :aria-label="t('projects.nextProject')"
                 @click="next"
             >
                 <ChevronRight class="h-6 w-6" aria-hidden="true" />
@@ -259,6 +263,7 @@ onUnmounted(() => {
                 <article
                     v-for="(project, index) in projects"
                     :key="project.id || index"
+                    :dir="locale === 'ar' ? 'rtl' : 'ltr'"
                     class="carousel-card portfolio-card group flex flex-col overflow-hidden"
                     :class="{
                         'is-active': getOffset(index) === 0,
@@ -267,7 +272,7 @@ onUnmounted(() => {
                     }"
                     :data-offset="getOffset(index)"
                     :aria-hidden="getOffset(index) !== 0"
-                    :aria-label="getOffset(index) === 0 ? `View details for ${project.title}` : undefined"
+                    :aria-label="getOffset(index) === 0 ? `${t('projects.viewDetails')}: ${localized(project, 'title')}` : undefined"
                     :tabindex="getOffset(index) === 0 ? 0 : -1"
                     :role="getOffset(index) === 0 ? 'button' : undefined"
                     :style="{
@@ -283,7 +288,7 @@ onUnmounted(() => {
                         <img
                             v-if="resolveImage(project)"
                             :src="resolveImage(project)"
-                            :alt="`${project.title} project screenshot`"
+                            :alt="`${localized(project, 'title')} ${t('projects.screenshotAlt')}`"
                             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                             loading="lazy"
                             width="800"
@@ -294,7 +299,7 @@ onUnmounted(() => {
                             class="flex h-full w-full flex-col items-center justify-center bg-canvas-deep p-6 text-center"
                         >
                             <FolderGit2 class="h-10 w-10 text-content-muted/50 mb-2" aria-hidden="true" />
-                            <p class="font-semibold text-content-muted text-base">{{ project.title }}</p>
+                            <p class="font-semibold text-content-muted text-base">{{ localized(project, 'title') }}</p>
                         </div>
                     </div>
 
@@ -312,11 +317,11 @@ onUnmounted(() => {
 
                         <!-- Project Title -->
                         <h3 class="text-xl font-bold text-content sm:text-2xl tracking-tight line-clamp-1">
-                            {{ project.title }}
+                            {{ localized(project, 'title') }}
                         </h3>
 
                         <div class="mt-auto flex items-center justify-between gap-3 pt-6 text-sm font-semibold text-primary">
-                            <span>View project details</span>
+                            <span>{{ t('projects.viewDetails') }}</span>
                             <ExternalLink class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                         </div>
                     </div>
@@ -389,8 +394,8 @@ onUnmounted(() => {
                         <button
                             ref="closeButton"
                             type="button"
-                            class="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white transition hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-primary sm:right-4 sm:top-4"
-                            aria-label="Close project details"
+                            class="absolute end-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white transition hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-primary sm:end-4 sm:top-4"
+                            :aria-label="t('projects.closeDetails')"
                             @click="closeProject"
                         >
                             <X class="h-5 w-5" aria-hidden="true" />
@@ -400,7 +405,7 @@ onUnmounted(() => {
                             <img
                                 v-if="resolveImage(selectedProject)"
                                 :src="resolveImage(selectedProject)"
-                                :alt="`${selectedProject.title} project screenshot`"
+                                :alt="`${localized(selectedProject, 'title')} ${t('projects.screenshotAlt')}`"
                                 class="h-full w-full object-cover"
                                 width="1200"
                                 height="675"
@@ -421,25 +426,25 @@ onUnmounted(() => {
                                 :id="`project-modal-title-${selectedProject.id}`"
                                 class="text-2xl font-bold tracking-tight text-content sm:text-3xl"
                             >
-                                {{ selectedProject.title }}
+                                {{ localized(selectedProject, 'title') }}
                             </h2>
 
                             <div class="mt-6">
-                                <h3 class="text-sm font-bold uppercase tracking-wider text-content-muted">About the project</h3>
+                                <h3 class="text-sm font-bold uppercase tracking-wider text-content-muted">{{ t('projects.aboutProject') }}</h3>
                                 <p class="mt-3 whitespace-pre-line text-base leading-7 text-content-secondary">
-                                    {{ selectedProject.description || 'No project description is available yet.' }}
+                                    {{ localized(selectedProject, 'description') || t('projects.noDescription') }}
                                 </p>
                             </div>
 
                             <div v-if="selectedProject.skills?.length" class="mt-7">
-                                <h3 class="text-sm font-bold uppercase tracking-wider text-content-muted">Technologies & skills</h3>
+                                <h3 class="text-sm font-bold uppercase tracking-wider text-content-muted">{{ t('projects.technologies') }}</h3>
                                 <div class="mt-3 flex flex-wrap gap-2">
                                     <span
                                         v-for="skill in selectedProject.skills"
                                         :key="skill.id || skill.name"
                                         class="skill-tag text-sm"
                                     >
-                                        {{ skill.name }}
+                                        {{ localized(skill, 'name') }}
                                     </span>
                                 </div>
                             </div>
@@ -453,7 +458,7 @@ onUnmounted(() => {
                                     class="btn-secondary"
                                 >
                                     <Github class="h-4 w-4" aria-hidden="true" />
-                                    <span>GitHub</span>
+                                    <span>{{ t('projects.github') }}</span>
                                 </a>
                                 <a
                                     v-if="selectedProject.live_url"
@@ -463,7 +468,7 @@ onUnmounted(() => {
                                     class="btn-primary"
                                 >
                                     <ExternalLink class="h-4 w-4" aria-hidden="true" />
-                                    <span>Live demo</span>
+                                    <span>{{ t('projects.liveDemo') }}</span>
                                 </a>
                             </div>
                         </div>

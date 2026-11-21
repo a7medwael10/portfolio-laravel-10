@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Projects\Schemas;
 
 use App\Enums\ProjectType;
 use App\Filament\Forms\Components\ServiceImageUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -49,6 +50,15 @@ class ProjectForm
                 \Filament\Forms\Components\Toggle::make('is_visible')
                     ->label('Visible on Portfolio')
                     ->default(true),
+                Section::make('Arabic Translation (الترجمة العربية)')
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('title_ar')
+                            ->label('Title (Arabic)'),
+                        Textarea::make('description_ar')
+                            ->label('Description (Arabic)')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

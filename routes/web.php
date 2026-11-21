@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MaintenanceCommandController;
 use App\Http\Controllers\MediaImageController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ProfileController;
@@ -35,6 +36,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/maintenance/{command}', MaintenanceCommandController::class)
+        ->whereIn('command', [
+            'migrate',
+            'migrate-fresh',
+            'rollback',
+            'seed',
+            'optimize-clear',
+            'queue-work',
+            'queue-restart',
+            'storage-link',
+        ])
+        ->name('maintenance.run');
 });
 
 require __DIR__.'/auth.php';

@@ -1,5 +1,6 @@
 <script setup>
 import { ArrowRight, ExternalLink, Github, Linkedin, Mail } from "lucide-vue-next";
+import { useLocale } from "@/Composables/useLocale";
 
 defineProps({
     profile: {
@@ -9,9 +10,7 @@ defineProps({
 });
 
 const emit = defineEmits(["navigate"]);
-
-const defaultBio =
-    "Full-Stack Developer specializing in building scalable web applications using Laravel for backend development and React for modern, responsive user interfaces.";
+const { isRtl, t, localized } = useLocale();
 
 const scrollTo = (id) => {
     emit("navigate", id);
@@ -30,29 +29,29 @@ const scrollTo = (id) => {
                     class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm text-success"
                 >
                     <span class="availability-dot" aria-hidden="true" />
-                    Available for new opportunities
+                    {{ t("hero.available") }}
                 </div>
 
                 <div class="space-y-3">
                     <p
                         class="text-xs font-semibold uppercase tracking-[0.18em] text-content-muted"
                     >
-                        Hello, I’m
+                        {{ t("hero.greeting") }}
                     </p>
                     <h1
                         class="text-4xl font-bold tracking-tight text-content sm:text-5xl lg:text-[3.25rem] lg:leading-tight"
                     >
-                        {{ profile?.name || "Ahmed Wael" }}
+                        {{ localized(profile, "name") || t("hero.defaultName") }}
                     </h1>
                     <p class="text-xl font-medium text-primary sm:text-2xl">
-                        {{ profile?.title || "Software Engineer & Full-Stack Developer" }}
+                        {{ localized(profile, "title") || t("hero.defaultTitle") }}
                     </p>
                 </div>
 
                 <p
                     class="max-w-xl text-base leading-relaxed text-content-secondary sm:text-lg"
                 >
-                    {{ profile?.bio || defaultBio }}
+                    {{ localized(profile, "bio") || t("hero.defaultBio") }}
                 </p>
 
                 <div class="flex flex-wrap items-center gap-3 pt-1">
@@ -61,9 +60,10 @@ const scrollTo = (id) => {
                         class="btn-primary group"
                         @click.prevent="scrollTo('projects')"
                     >
-                        View Projects
+                        {{ t("hero.viewProjects") }}
                         <ArrowRight
-                            class="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                            class="h-4 w-4 transition-transform"
+                            :class="isRtl ? 'rotate-180 group-hover:-translate-x-0.5' : 'group-hover:translate-x-0.5'"
                             aria-hidden="true"
                         />
                     </a>
@@ -76,7 +76,7 @@ const scrollTo = (id) => {
                         class="btn-secondary"
                     >
                         <ExternalLink class="h-4 w-4" aria-hidden="true" />
-                        View CV
+                        {{ t("hero.viewCv") }}
                     </a>
 
                     <a
@@ -85,7 +85,7 @@ const scrollTo = (id) => {
                         @click.prevent="scrollTo('contact')"
                     >
                         <Mail class="h-4 w-4" aria-hidden="true" />
-                        Contact
+                        {{ t("hero.contact") }}
                     </a>
                 </div>
 
@@ -96,7 +96,7 @@ const scrollTo = (id) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         class="inline-flex h-11 w-11 items-center justify-center rounded-btn border border-line text-content-muted transition-colors hover:border-line-hover hover:text-content"
-                        aria-label="GitHub profile"
+                        :aria-label="t('hero.githubProfile')"
                     >
                         <Github class="h-5 w-5" aria-hidden="true" />
                     </a>
@@ -106,7 +106,7 @@ const scrollTo = (id) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         class="inline-flex h-11 w-11 items-center justify-center rounded-btn border border-line text-content-muted transition-colors hover:border-line-hover hover:text-content"
-                        aria-label="LinkedIn profile"
+                        :aria-label="t('hero.linkedinProfile')"
                     >
                         <Linkedin class="h-5 w-5" aria-hidden="true" />
                     </a>
@@ -116,7 +116,7 @@ const scrollTo = (id) => {
             <!-- Right: portrait -->
             <div class="order-2 lg:col-span-5">
                 <div
-                    class="relative mx-auto max-w-sm lg:ml-auto lg:mr-0 lg:max-w-none"
+                    class="relative mx-auto max-w-sm lg:ms-auto lg:me-0 lg:max-w-none"
                 >
                     <div
                         class="absolute -inset-3 rounded-[1.75rem] bg-primary/15 blur-2xl"
@@ -131,7 +131,7 @@ const scrollTo = (id) => {
                             <img
                                 v-if="profile?.hero_image_url"
                                 :src="profile.hero_image_url"
-                                :alt="`${profile?.name || 'Ahmed Wael'} portrait`"
+                                :alt="`${localized(profile, 'name') || t('hero.defaultName')} ${t('hero.portraitAlt')}`"
                                 class="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
                                 width="480"
                                 height="600"
@@ -140,9 +140,7 @@ const scrollTo = (id) => {
                                 v-else
                                 class="flex h-full w-full items-center justify-center bg-gradient-to-br from-surface-elevated to-canvas-deep text-content-muted"
                             >
-                                <span class="text-sm tracking-wide"
-                                    >Portrait coming soon</span
-                                >
+                                <span class="text-sm tracking-wide">{{ t("hero.portraitSoon") }}</span>
                             </div>
                         </div>
                     </div>

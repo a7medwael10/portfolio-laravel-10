@@ -12,7 +12,7 @@ class Project extends Model
 {
     use DeletesReplacedMedia, HasFactory;
 
-    protected $fillable = ['title', 'slug', 'description', 'type', 'experience_id', 'main_image', 'github_url', 'live_url', 'is_visible'];
+    protected $fillable = ['title', 'title_ar', 'slug', 'description', 'description_ar', 'type', 'experience_id', 'main_image', 'github_url', 'live_url', 'is_visible'];
 
     protected $casts = [
         'type' => ProjectType::class,

@@ -9,7 +9,7 @@ class SkillCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'is_visible'];
+    protected $fillable = ['name', 'name_ar', 'is_visible'];
     
     protected $casts = [
         'is_visible' => 'boolean',

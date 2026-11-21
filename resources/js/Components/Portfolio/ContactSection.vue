@@ -2,6 +2,7 @@
 import { Github, Linkedin, Loader2, Mail, MapPin, Phone, Send } from 'lucide-vue-next';
 import { usePage } from '@inertiajs/vue3';
 import SectionHeader from '@/Components/Portfolio/SectionHeader.vue';
+import { useLocale } from '@/Composables/useLocale';
 
 defineProps({
     profile: {
@@ -19,23 +20,24 @@ defineProps({
 });
 
 const page = usePage();
+const { t, localized } = useLocale();
 </script>
 
 <template>
     <section id="contact" class="portfolio-section pb-16 md:pb-20">
         <SectionHeader
-            label="Contact"
-            title="Let’s Connect"
-            description="Open to new opportunities and interesting projects. Feel free to drop a message."
+            :label="t('contact.label')"
+            :title="t('contact.title')"
+            :description="t('contact.description')"
         />
 
         <div class="portfolio-card overflow-hidden">
             <div class="grid lg:grid-cols-2">
                 <!-- Details -->
-                <div class="border-b border-line p-6 sm:p-8 lg:border-b-0 lg:border-r lg:p-10">
-                    <h3 class="text-2xl font-bold text-content">Get in touch</h3>
+                <div class="border-b border-line p-6 sm:p-8 lg:border-b-0 lg:border-e lg:p-10">
+                    <h3 class="text-2xl font-bold text-content">{{ t('contact.getInTouch') }}</h3>
                     <p class="mt-3 max-w-md text-content-secondary leading-relaxed">
-                      I’m a Software Engineer and Full-Stack Developer focused on building scalable, reliable, and user-friendly web applications. Have a project or opportunity in mind? Let’s connect.
+                      {{ t('contact.intro') }}
                     </p>
 
                     <ul class="mt-8 space-y-5">
@@ -47,7 +49,7 @@ const page = usePage();
                                 <Mail class="h-5 w-5" />
                             </span>
                             <div class="min-w-0">
-                                <p class="text-sm text-content-muted">Email</p>
+                                <p class="text-sm text-content-muted">{{ t('contact.email') }}</p>
                                 <a
                                     :href="`mailto:${profile?.email || 'ahmed.wael1025@gmail.com'}`"
                                     class="break-all text-base font-medium text-content transition-colors hover:text-primary"
@@ -65,9 +67,9 @@ const page = usePage();
                                 <MapPin class="h-5 w-5" />
                             </span>
                             <div class="min-w-0">
-                                <p class="text-sm text-content-muted">Location</p>
+                                <p class="text-sm text-content-muted">{{ t('contact.location') }}</p>
                                 <p class="text-base font-medium text-content">
-                                    {{ profile?.location || 'Mansoura, Egypt' }}
+                                    {{ localized(profile, 'location') || t('contact.defaultLocation') }}
                                 </p>
                             </div>
                         </li>
@@ -80,10 +82,11 @@ const page = usePage();
                                 <Phone class="h-5 w-5" />
                             </span>
                             <div class="min-w-0">
-                                <p class="text-sm text-content-muted">Phone</p>
+                                <p class="text-sm text-content-muted">{{ t('contact.phone') }}</p>
                                 <a
                                     :href="`tel:${profile?.phone || '+201212808098'}`"
-                                    class="break-all text-base font-medium text-content transition-colors hover:text-primary"
+                                    dir="ltr"
+                                    class="inline-block break-all text-base font-medium text-content transition-colors hover:text-primary"
                                 >
                                     {{ profile?.phone || '+201212808098' }}
                                 </a>
@@ -100,12 +103,13 @@ const page = usePage();
                                 </svg>
                             </span>
                             <div class="min-w-0">
-                                <p class="text-sm text-content-muted">WhatsApp</p>
+                                <p class="text-sm text-content-muted">{{ t('contact.whatsapp') }}</p>
                                 <a
                                     :href="profile?.whatsapp_url || `https://wa.me/${(profile?.phone || '+201212808098').replace(/\D/g, '')}`"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="break-all text-base font-medium text-content transition-colors hover:text-primary"
+                                    dir="ltr"
+                                    class="inline-block break-all text-base font-medium text-content transition-colors hover:text-primary"
                                 >
                                     {{ profile?.phone || '+201212808098' }}
                                 </a>
@@ -123,7 +127,7 @@ const page = usePage();
                             target="_blank"
                             rel="noopener noreferrer"
                             class="inline-flex h-11 w-11 items-center justify-center rounded-btn border border-line text-content-muted transition-colors hover:border-line-hover hover:text-content"
-                            aria-label="GitHub profile"
+                            :aria-label="t('hero.githubProfile')"
                         >
                             <Github class="h-5 w-5" aria-hidden="true" />
                         </a>
@@ -133,7 +137,7 @@ const page = usePage();
                             target="_blank"
                             rel="noopener noreferrer"
                             class="inline-flex h-11 w-11 items-center justify-center rounded-btn border border-line text-content-muted transition-colors hover:border-line-hover hover:text-content"
-                            aria-label="LinkedIn profile"
+                            :aria-label="t('hero.linkedinProfile')"
                         >
                             <Linkedin class="h-5 w-5" aria-hidden="true" />
                         </a>
@@ -153,7 +157,7 @@ const page = usePage();
                     <form class="space-y-5" @submit.prevent="submitContact">
                         <div class="space-y-2">
                             <label for="contact-name" class="block text-sm font-medium text-content-secondary">
-                                Name
+                                {{ t('contact.nameLabel') }}
                             </label>
                             <input
                                 id="contact-name"
@@ -174,7 +178,7 @@ const page = usePage();
 
                         <div class="space-y-2">
                             <label for="contact-email" class="block text-sm font-medium text-content-secondary">
-                                Email Address
+                                {{ t('contact.emailLabel') }}
                             </label>
                             <input
                                 id="contact-email"
@@ -195,7 +199,7 @@ const page = usePage();
 
                         <div class="space-y-2">
                             <label for="contact-message" class="block text-sm font-medium text-content-secondary">
-                                Message
+                                {{ t('contact.messageLabel') }}
                             </label>
                             <textarea
                                 id="contact-message"
@@ -218,8 +222,8 @@ const page = usePage();
                             class="btn-primary w-full"
                             :disabled="contactForm.processing"
                         >
-                            <span v-if="!contactForm.processing">Send Message</span>
-                            <span v-else>Sending…</span>
+                            <span v-if="!contactForm.processing">{{ t('contact.sendMessage') }}</span>
+                            <span v-else>{{ t('contact.sending') }}</span>
                             <Loader2
                                 v-if="contactForm.processing"
                                 class="h-5 w-5 animate-spin"

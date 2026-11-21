@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Experiences\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 
@@ -29,6 +31,21 @@ class ExperienceForm
                 \Filament\Forms\Components\Toggle::make('is_visible')
                     ->label('Visible on Portfolio')
                     ->default(true),
+                Section::make('Arabic Translation (الترجمة العربية)')
+                    ->collapsible()
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('title_ar')
+                            ->label('Title (Arabic)'),
+                        TextInput::make('company_ar')
+                            ->label('Company (Arabic)'),
+                        TextInput::make('work_location_ar')
+                            ->label('Work location (Arabic)'),
+                        TagsInput::make('description_ar')
+                            ->label('Description (Arabic)')
+                            ->placeholder('أضف نقطة')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

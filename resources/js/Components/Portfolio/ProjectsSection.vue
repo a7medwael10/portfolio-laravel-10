@@ -1,6 +1,7 @@
 <script setup>
 import SectionHeader from '@/Components/Portfolio/SectionHeader.vue';
 import ProjectsCarousel from '@/Components/Portfolio/ProjectsCarousel.vue';
+import { useLocale } from '@/Composables/useLocale';
 
 defineProps({
     projects: {
@@ -12,14 +13,16 @@ defineProps({
         default: null,
     },
 });
+
+const { t } = useLocale();
 </script>
 
 <template>
     <section id="projects" class="portfolio-section">
         <SectionHeader
-            label="Work"
-            title="Projects"
-            description="Selected work across restaurant, e-commerce, education, reservation, logistics, and admin platforms."
+            :label="t('projects.label')"
+            :title="t('projects.title')"
+            :description="t('projects.description')"
         />
 
         <ProjectsCarousel
